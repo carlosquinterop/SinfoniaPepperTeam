@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>sinfonia_pepper_packages</name>
+  <version>0.0.1</version>
+  <description>Meta package for the sinfonia_pepper_packages</description>
+
+  <maintainer email="carlosq@todo.todo">carlosq</maintainer>
+
+
+  <license>GNU</license>
+
+
+  <url type="website">http://sinfonia.ai</url>
+  <author email="sinfonia@ai.com">SinfonIA Pepper Team</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <exec_depend>sinfonia_pepper_applications</exec_depend>
+  <exec_depend>sinfonia_pepper_robot_toolkit</exec_depend>
+  <exec_depend>sinfonia_pepper_tools_decisionmaking</exec_depend>
+  <exec_depend>sinfonia_pepper_tools_interaction</exec_depend>
+  <exec_depend>sinfonia_pepper_tools_navigation</exec_depend>
+
+
+  <export>
+    <metapackage/>
+  </export>
+</package>
