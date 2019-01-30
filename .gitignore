@@ -51,3 +51,6 @@ qtcreator-*
 CATKIN_IGNORE
 
 CMakeLists.txt
+
+#Ignore Mac files
+.DS_Store
