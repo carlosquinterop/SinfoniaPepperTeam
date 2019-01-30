@@ -11,8 +11,8 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="200mm"
-   height="160.99989mm"
-   viewBox="0 0 200 160.99989"
+   height="138.99989mm"
+   viewBox="0 0 200 138.99989"
    version="1.1"
    id="svg8"
    inkscape:version="0.92.2 5c3e80d, 2017-08-06"
@@ -284,15 +284,15 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.6077558"
-     inkscape:cx="108.10753"
-     inkscape:cy="240.28105"
+     inkscape:zoom="0.85949649"
+     inkscape:cx="424.35483"
+     inkscape:cy="229.46571"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:snap-grids="true"
      inkscape:window-width="1440"
-     inkscape:window-height="778"
+     inkscape:window-height="783"
      inkscape:window-x="0"
      inkscape:window-y="1"
      inkscape:window-maximized="1"
@@ -351,16 +351,16 @@
     <text
        transform="scale(0.98903419,1.0110874)"
        id="text877"
-       y="46.368927"
-       x="90.945663"
+       y="47.668465"
+       x="107.29469"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05555534px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.2133787"
        xml:space="preserve"
        inkscape:export-xdpi="150"
        inkscape:export-ydpi="150"><tspan
          sodipodi:role="line"
          id="tspan879"
-         x="90.945663"
-         y="46.368927">Robot Traction Control</tspan></text>
+         x="107.29469"
+         y="47.668465">Robot Control</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:0.49554822;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#Arrow2Lstart)"
        d="M 54.1833,45.719373 H 30.247774 V 29.619372"
@@ -378,16 +378,16 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05555534px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.2133787"
-       x="81.850082"
-       y="69.116859"
+       x="100.88165"
+       y="69.427216"
        id="text5240"
        transform="scale(0.98903419,1.0110874)"
        inkscape:export-xdpi="150"
        inkscape:export-ydpi="150"><tspan
          sodipodi:role="line"
          id="tspan5734"
-         x="81.850082"
-         y="69.116859">Robot Manipulators Control *</tspan></text>
+         x="100.88165"
+         y="69.427216">Robot Interaction</tspan></text>
     <path
        inkscape:connector-curvature="0"
        id="path5242"
@@ -405,16 +405,16 @@
     <text
        transform="scale(0.98903419,1.0110874)"
        id="text5608"
-       y="90.875549"
-       x="104.85655"
+       y="91.185905"
+       x="105.96833"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05555534px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.2133787"
        xml:space="preserve"
        inkscape:export-xdpi="150"
        inkscape:export-ydpi="150"><tspan
          sodipodi:role="line"
          id="tspan5736"
-         x="104.85655"
-         y="90.875549">Robot Sensors *</tspan></text>
+         x="105.96833"
+         y="91.185905">Robot Sensors</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:0.5758006;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker5618);marker-end:url(#marker5622)"
        d="M 53.949583,89.6729 H 30.337729 V 67.638028"
@@ -432,16 +432,16 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05555534px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.2133787"
-       x="108.60179"
-       y="112.63424"
+       x="94.966415"
+       y="112.26075"
        id="text5750"
        transform="scale(0.98903419,1.0110874)"
        inkscape:export-xdpi="150"
        inkscape:export-ydpi="150"><tspan
          sodipodi:role="line"
          id="tspan5754"
-         x="108.60179"
-         y="112.63424">Robot Sound *</tspan></text>
+         x="94.966415"
+         y="112.26075">Robot Pose Manager</tspan></text>
     <path
        inkscape:connector-curvature="0"
        id="path5752"
@@ -456,19 +456,6 @@
        style="opacity:0.93000034;fill:#969696;fill-opacity:1;stroke:#646464;stroke-width:1.48325229;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        inkscape:export-xdpi="150"
        inkscape:export-ydpi="150" />
-    <text
-       transform="scale(0.98903419,1.0110874)"
-       id="text5784"
-       y="134.3929"
-       x="97.9011"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05555534px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.2133787"
-       xml:space="preserve"
-       inkscape:export-xdpi="150"
-       inkscape:export-ydpi="150"><tspan
-         sodipodi:role="line"
-         id="tspan5788"
-         x="97.9011"
-         y="134.3929">Robot LED &amp; Misc *</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:0.5758006;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker5796);marker-end:url(#marker5804)"
        d="M 53.949583,133.67284 H 30.337729 v -22.03493"
@@ -476,32 +463,18 @@
        inkscape:connector-curvature="0"
        inkscape:export-xdpi="150"
        inkscape:export-ydpi="150" />
-    <path
-       style="opacity:0.93000034;fill:#969696;fill-opacity:1;stroke:#646464;stroke-width:1.48325229;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="m 55.741626,155.53737 v -9.25839 H 130 204.25838 v 9.25839 9.25839 H 130 55.741626 Z"
-       id="path5814"
-       inkscape:connector-curvature="0"
-       inkscape:export-xdpi="150"
-       inkscape:export-ydpi="150" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05555534px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.2133787"
-       x="83.990211"
-       y="156.15163"
+       x="80.295479"
+       y="134.0195"
        id="text5818"
        transform="scale(0.98903419,1.0110874)"
        inkscape:export-xdpi="150"
        inkscape:export-ydpi="150"><tspan
          sodipodi:role="line"
          id="tspan5824"
-         x="83.990211"
-         y="156.15163">Robot Tablet Management **</tspan></text>
-    <path
-       inkscape:connector-curvature="0"
-       id="path5820"
-       d="M 53.949583,155.67284 H 30.337729 v -22.03493"
-       style="fill:none;stroke:#000000;stroke-width:0.5758006;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker5832);marker-end:url(#marker5840)"
-       inkscape:export-xdpi="150"
-       inkscape:export-ydpi="150" />
+         x="80.295479"
+         y="134.0195">Robot Tablet Management **</tspan></text>
   </g>
 </svg>
