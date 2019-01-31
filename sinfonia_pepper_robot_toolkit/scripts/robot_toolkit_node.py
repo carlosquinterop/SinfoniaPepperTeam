@@ -29,7 +29,7 @@ from robot_control import RobotControl
 
 def robotToolkitNode():
     rospy.init_node('robot_toolkit_node', anonymous=True)
-    ip = "192.168.0.102"
+    ip = "192.168.0.101"
 
     rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
 
