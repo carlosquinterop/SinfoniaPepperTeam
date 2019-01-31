@@ -10,8 +10,8 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="138.94949mm"
-   height="75.166214mm"
-   viewBox="0 0 138.94949 75.166214"
+   height="96.862091mm"
+   viewBox="0 0 138.94949 96.862091"
    version="1.1"
    id="svg8"
    inkscape:version="0.92.2 5c3e80d, 2017-08-06"
@@ -19,13 +19,59 @@
   <defs
      id="defs2">
     <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker1626"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="SquareM">
+      <path
+         inkscape:connector-curvature="0"
+         transform="scale(0.4)"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
+         d="M -5,-5 V 5 H 5 V -5 Z"
+         id="path1624" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker1148"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="DiamondMend">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(0.4,0,0,0.4,-2.6,0)"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
+         d="M 0,-7.0710768 -7.0710894,0 0,7.0710589 7.0710462,0 Z"
+         id="path1146" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible"
+       id="marker946"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="DiamondMend">
+      <path
+         inkscape:connector-curvature="0"
+         transform="matrix(0.4,0,0,0.4,-2.6,0)"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
+         d="M 0,-7.0710768 -7.0710894,0 0,7.0710589 7.0710462,0 Z"
+         id="path944" />
+    </marker>
+    <marker
        inkscape:stockid="DiamondMend"
        orient="auto"
        refY="0"
        refX="0"
        id="marker4286"
        style="overflow:visible"
-       inkscape:isstock="true">
+       inkscape:isstock="true"
+       inkscape:collect="always">
       <path
          id="path4284"
          d="M 0,-7.0710768 -7.0710894,0 0,7.0710589 7.0710462,0 Z"
@@ -71,7 +117,8 @@
        refX="0"
        id="marker2628"
        style="overflow:visible"
-       inkscape:isstock="true">
+       inkscape:isstock="true"
+       inkscape:collect="always">
       <path
          id="path2626"
          d="M 0,-7.0710768 -7.0710894,0 0,7.0710589 7.0710462,0 Z"
@@ -213,8 +260,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
-     inkscape:cx="275.79569"
-     inkscape:cy="124.67742"
+     inkscape:cx="234.12362"
+     inkscape:cy="206.6776"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -333,7 +380,7 @@
        inkscape:export-ydpi="150" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333333px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr;text-anchor:start;fill:#008000;fill-opacity:1;stroke:none;stroke-width:0.15719904;"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#008000;fill-opacity:1;stroke:none;stroke-width:0.15719904"
        x="50.773808"
        y="56.256058"
        id="text2444"
@@ -341,7 +388,9 @@
        inkscape:export-xdpi="150"
        inkscape:export-ydpi="150"><tspan
          sodipodi:role="line"
-         id="tspan4372">RobotPoseManager (robot_pose_manager.py)</tspan></text>
+         id="tspan4372"
+         x="50.773808"
+         y="56.256058">RobotPoseManager (robot_pose_manager.py)</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:0.40411901px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#marker2628)"
        d="m 48.038173,59.966102 v 9.766565 H 167.61438"
@@ -365,42 +414,102 @@
     <path
        inkscape:connector-curvature="0"
        id="path2962"
-       d="M 38.892396,83.838473 H 74.23644"
+       d="M 35.188227,105.53435 H 70.532271"
        style="fill:none;stroke:#000000;stroke-width:0.55073184;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker2970)"
        inkscape:export-xdpi="150"
        inkscape:export-ydpi="150" />
     <text
        transform="scale(0.97650948,1.0240556)"
        id="text2966"
-       y="79.838432"
-       x="43.564121"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333333px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr;text-anchor:start;fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:0.15719904;"
+       y="101.02473"
+       x="39.770844"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:0.15719904"
        xml:space="preserve"
        inkscape:export-xdpi="150"
        inkscape:export-ydpi="150"><tspan
          sodipodi:role="line"
          id="tspan4270"
-         x="43.564121"
-         y="79.838432">ROS node</tspan></text>
+         x="39.770844"
+         y="101.02473">ROS node</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:0.55073184;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker4286)"
-       d="M 87.575737,83.838473 H 122.91982"
+       d="M 83.871568,105.53435 H 119.21563"
        id="path3784"
        inkscape:connector-curvature="0"
        inkscape:export-xdpi="150"
        inkscape:export-ydpi="150" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333333px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr;text-anchor:start;fill:#008000;fill-opacity:1;stroke:none;stroke-width:0.15719904;"
-       x="93.418518"
-       y="79.838432"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#008000;fill-opacity:1;stroke:none;stroke-width:0.15719904"
+       x="89.625267"
+       y="101.02473"
        id="text3788"
        transform="scale(0.97650948,1.0240556)"
        inkscape:export-xdpi="150"
        inkscape:export-ydpi="150"><tspan
          sodipodi:role="line"
          id="tspan4268"
-         x="93.418518"
-         y="79.838432">Python class</tspan></text>
+         x="89.625267"
+         y="101.02473">Python class</tspan></text>
+    <path
+       inkscape:export-ydpi="150"
+       inkscape:export-xdpi="150"
+       inkscape:connector-curvature="0"
+       id="path938"
+       d="m 48.038173,70.54944 v 9.766565 H 167.61438"
+       style="fill:none;stroke:#000000;stroke-width:0.40411901px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#marker946)" />
+    <text
+       inkscape:export-ydpi="150"
+       inkscape:export-xdpi="150"
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#aa0000;fill-opacity:1;stroke:none;stroke-width:0.15719904"
+       x="50.773808"
+       y="76.925545"
+       id="text942"
+       transform="scale(0.97650948,1.0240556)"><tspan
+         y="76.925545"
+         x="50.773808"
+         id="tspan940"
+         sodipodi:role="line">utils (utils.py)</tspan></text>
+    <path
+       inkscape:export-ydpi="150"
+       inkscape:export-xdpi="150"
+       inkscape:connector-curvature="0"
+       id="path1140"
+       d="m 131.49656,105.53435 h 35.34408"
+       style="fill:none;stroke:#000000;stroke-width:0.55073184;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker1148)" />
+    <text
+       inkscape:export-ydpi="150"
+       inkscape:export-xdpi="150"
+       transform="scale(0.97650948,1.0240556)"
+       id="text1144"
+       y="101.02473"
+       x="135.14442"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#aa0000;fill-opacity:1;stroke:none;stroke-width:0.15719904"
+       xml:space="preserve"><tspan
+         y="101.02473"
+         x="135.14442"
+         id="tspan1142"
+         sodipodi:role="line">Python functions</tspan></text>
+    <path
+       inkscape:export-ydpi="150"
+       inkscape:export-xdpi="150"
+       inkscape:connector-curvature="0"
+       id="path1618"
+       d="M 31.294625,92.305144 H 163.60116"
+       style="fill:none;stroke:#000000;stroke-width:1.06554723;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#marker1626)" />
+    <text
+       inkscape:export-ydpi="150"
+       inkscape:export-xdpi="150"
+       transform="scale(0.97650948,1.0240556)"
+       id="text1622"
+       y="88.106247"
+       x="36.519463"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.29166651px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:0.15719904"
+       xml:space="preserve"><tspan
+         y="88.106247"
+         x="36.519463"
+         id="tspan1620"
+         sodipodi:role="line">robotToolkitTestNode (robot_toolkit_test_node.py)</tspan></text>
   </g>
 </svg>
