@@ -27,6 +27,7 @@ import rospy
 from naoqi import ALProxy
 from std_msgs.msg import String
 from geometry_msgs.msg import Vector3
+from geometry_msgs.msg import Quaternion
 
 
 class RobotControl:
@@ -36,7 +37,8 @@ class RobotControl:
         self._traction.moveInit()
         self._topics = {"sIA_moveToward": [Vector3, 10],
                         "sIA_stopMove": [String, 10],
-                        "sIA_rt_error_msgs": [String, 10]}
+                        "sIA_rt_error_msgs": [String, 10],
+                        "sIA_moveTo": [Quaternion, 10]}
 
     def initTopics(self):
         for topic in self._topics.keys():
@@ -46,6 +48,7 @@ class RobotControl:
     def subscribeTopics(self):
         rospy.Subscriber("sIA_moveToward", Vector3, self.moveTowardCallback)
         rospy.Subscriber("sIA_stopMove", String, self.stopMoveCallback)
+        rospy.Subscriber("sIA_moveTo", Quaternion, self.moveToCallback)
 
     def moveTowardCallback(self, data):
         values = [data.x, data.y, data.z]
@@ -63,3 +66,14 @@ class RobotControl:
             self._topics["sIA_rt_error_msgs"][-1].publish("Error 0x01: Wrong message")
         else:
             self._traction.post.stopMove()
+
+    def moveToCallback(self, data):
+        values = [data.x, data.y, data.z, data.w]
+        criteria = [[-3.14159, 3.14159]]
+
+        if utils.areInRange([values[2]], criteria):
+            [vx, vy, theta, secs] = values
+            self._traction.post.moveTo(vx, vy, theta, secs)
+            rospy.loginfo(rospy.get_caller_id() + "I heard %s", data)
+        else:
+            self._topics["sIA_rt_error_msgs"][-1].publish("Error 0x00: Value out of range")

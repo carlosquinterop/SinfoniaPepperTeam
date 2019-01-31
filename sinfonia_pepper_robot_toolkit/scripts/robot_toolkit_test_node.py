@@ -27,8 +27,9 @@ import utils
 import rospy
 from std_msgs.msg import String
 from geometry_msgs.msg import Vector3
+from geometry_msgs.msg import Quaternion
 
-TESTTOPIC = "sIA_moveToward"
+TESTTOPIC = "sIA_moveTo"
 
 
 def robotToolkitTestNode():
@@ -61,6 +62,36 @@ def robotToolkitTestNode():
         time.sleep(3)
         # Error test
         msg = utils.fillVector([0.0, -2.0, 0.0], "v3")
+        pub.publish(msg)
+        time.sleep(3)
+        stopStr = "Stap"
+        pub2.publish(stopStr)
+    elif TESTTOPIC == "sIA_moveTo":
+        pub = rospy.Publisher("sIA_moveTo", Quaternion, queue_size=10)
+        while pub.get_num_connections() == 0:
+            rate.sleep()
+        pub2 = rospy.Publisher("sIA_stopMove", String, queue_size=10)
+        while pub2.get_num_connections() == 0:
+            rate.sleep()
+
+        # Functionality test
+        msg = utils.fillVector([1.0, 0.0, 0.0, 6.0], 'q')
+        pub.publish(msg)
+        time.sleep(8)
+        msg = utils.fillVector([0.0, 1.0, 0.0, 6.0], 'q')
+        pub.publish(msg)
+        time.sleep(8)
+        msg = utils.fillVector([-1.0, 0.0, 0.0, 6.0], 'q')
+        pub.publish(msg)
+        time.sleep(8)
+        msg = utils.fillVector([0.0, -1.0, 0.0, 6.0], 'q')
+        pub.publish(msg)
+        time.sleep(8)
+        stopStr = "Stop"
+        pub2.publish(stopStr)
+        time.sleep(3)
+        # Error test
+        msg = utils.fillVector([0.0, -1.0, 4.0, 6.0], 'q')
         pub.publish(msg)
         time.sleep(3)
         stopStr = "Stap"
