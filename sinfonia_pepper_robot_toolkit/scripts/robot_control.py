@@ -22,8 +22,44 @@
 //======================================================================//
 """
 
+import utils
+import rospy
+from naoqi import ALProxy
+from std_msgs.msg import String
+from geometry_msgs.msg import Vector3
+
 
 class RobotControl:
 
     def __init__(self, ip):
-        pass
+        self._traction = ALProxy("ALMotion", ip, 9559)
+        self._traction.moveInit()
+        self._topics = {"sIA_moveToward": [Vector3, 10],
+                        "sIA_stopMove": [String, 10],
+                        "sIA_rt_error_msgs": [String, 10]}
+
+    def initTopics(self):
+        for topic in self._topics.keys():
+            self._topics[topic].append(rospy.Publisher(topic, self._topics[topic][0],
+                                                       queue_size=self._topics[topic][1]))
+
+    def subscribeTopics(self):
+        rospy.Subscriber("sIA_moveToward", Vector3, self.moveTowardCallback)
+        rospy.Subscriber("sIA_stopMove", String, self.stopMoveCallback)
+
+    def moveTowardCallback(self, data):
+        values = [data.x, data.y, data.z]
+        criteria = [[-1, 1], [-1, 1], [-1, 1]]
+
+        if utils.areInRange(values, criteria):
+            [vx, vy, theta] = values
+            self._traction.post.moveToward(vx, vy, theta)
+            rospy.loginfo(rospy.get_caller_id() + "I heard %s", data)
+        else:
+            self._topics["sIA_rt_error_msgs"][-1].publish("Error 0x00: Value out of range")
+
+    def stopMoveCallback(self, data):
+        if data.data != "Stop":
+            self._topics["sIA_rt_error_msgs"][-1].publish("Error 0x01: Wrong message")
+        else:
+            self._traction.post.stopMove()

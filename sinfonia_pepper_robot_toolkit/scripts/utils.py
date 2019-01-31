@@ -18,3 +18,31 @@
 //                                                                      //
 //======================================================================//
 """
+
+from geometry_msgs.msg import Vector3
+from geometry_msgs.msg import Quaternion
+
+
+def areInRange(values, criteria):
+    boolean = True
+    for value, criterion in zip(values, criteria):
+        if not (criterion[0] <= value <= criterion[1]):
+            boolean = False
+
+    return boolean
+
+
+def fillVector(values, dataType):
+    msg = None
+
+    if dataType == "v3":
+        msg = Vector3()
+    elif dataType == 'q':
+        msg = Quaternion()
+        msg.w = values[3]
+
+    msg.x = values[0]
+    msg.y = values[1]
+    msg.z = values[2]
+
+    return msg

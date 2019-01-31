@@ -23,10 +23,21 @@
 """
 
 import rospy
+from std_msgs.msg import String
+from robot_control import RobotControl
 
 
 def robotToolkitNode():
     rospy.init_node('robot_toolkit_node', anonymous=True)
+    ip = "192.168.0.102"
+
+    rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
+
+    robotControl = RobotControl(ip)
+    robotControl.initTopics()
+    robotControl.subscribeTopics()
+
+    rospy.spin()
 
 
 if __name__ == '__main__':
