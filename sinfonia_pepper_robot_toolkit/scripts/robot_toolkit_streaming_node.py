@@ -22,8 +22,46 @@
 //======================================================================//
 """
 
+import rospy
+from std_msgs.msg import String
+from robot_sensors import RobotSensors
 
-class Stream:
+IP = "192.168.0.101"
 
-    def __init__(self, ip):
+
+class RobotToolkitStream:
+
+    def __init__(self):
+        rospy.init_node('robot_toolkit_streaming_node', anonymous=True)
+        self._pub = rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
+        self._rate = rospy.Rate(10)
+        self._flag = ""
+        self._robotSensors = RobotSensors(IP)
+
+        self._laserTypes = {"pointCloud": [True, False],
+                            "laserScan": [False, True]}
+        self._laserStates = {"ON": True,
+                             "OFF": False}
+
+    def robotToolkitStreamingNode(self):
+        rospy.Subscriber("sIA_stream_from", String, self.testCallback)
+
+        while not rospy.is_shutdown():
+            if self._robotSensors.robotLaser.checkOn():
+                self._robotSensors.robotLaser.getLaserData()
+            self._rate.sleep()
+
+    def testCallback(self, data):
+        laser = data.data.split('.')[0].split('_')[-1]
+        type = data.data.split('.')[-2]
+        state = data.data.split('.')[-1]
+        self._robotSensors.robotLaser.setType(self._laserTypes[type][0], self._laserTypes[type][1])
+        self._robotSensors.robotLaser.setLaser(laser, self._laserStates[state])
+
+
+if __name__ == '__main__':
+    try:
+        s = RobotToolkitStream()
+        s.robotToolkitStreamingNode()
+    except rospy.ROSInterruptException:
         pass

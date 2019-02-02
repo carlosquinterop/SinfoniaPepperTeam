@@ -22,8 +22,12 @@
 //======================================================================//
 """
 
+from robot_lasers import RobotLasers
+
 
 class RobotSensors:
 
     def __init__(self, ip):
-        pass
+        self.robotLaser = RobotLasers(ip=ip)
+        self.robotLaser.createMessages()
+        self.robotLaser.createPublishers()

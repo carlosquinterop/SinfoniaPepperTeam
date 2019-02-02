@@ -29,7 +29,7 @@ from std_msgs.msg import String
 from geometry_msgs.msg import Vector3
 from geometry_msgs.msg import Quaternion
 
-TESTTOPIC = "sIA_moveTo"
+TESTTOPIC = "sIA_laser"
 
 
 def robotToolkitTestNode():
@@ -40,6 +40,8 @@ def robotToolkitTestNode():
         testMoveToward(rate)
     elif TESTTOPIC == "sIA_moveTo":
         testMoveTo(rate)
+    elif TESTTOPIC == "sIA_laser":
+        testLaser(rate)
 
 
 def testMoveToward(rate):
@@ -91,6 +93,20 @@ def testMoveTo(rate):
     # Error test
     msg = utils.fillVector([0.0, -1.0, 4.0, 6.0], 'q')
     pub.publish(msg)
+
+
+def testLaser(rate):
+    pub = rospy.Publisher("sIA_stream_from", String, queue_size=10)
+    while pub.get_num_connections() == 0:
+        rate.sleep()
+    pub.publish("sIA_laser_gl.laserScan.ON")
+    time.sleep(5)
+    pub.publish("sIA_laser_gr.laserScan.ON")
+    time.sleep(5)
+    pub.publish("sIA_laser_gl.laserScan.OFF")
+    time.sleep(5)
+    pub.publish("sIA_laser_gr.laserScan.OFF")
+    time.sleep(5)
 
 
 if __name__ == '__main__':
