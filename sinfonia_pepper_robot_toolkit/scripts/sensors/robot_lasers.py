@@ -240,26 +240,26 @@ class RobotLasers:
         return laserScanMsg
 
     def createPublishers(self):
-        self.pcShovelPublisher = rospy.Publisher(self.TOPIC_LASER_SHOVEL + 'pointcloud', PointCloud2, queue_size=1)
-        self.pcGroundLeftPublisher = rospy.Publisher(self.TOPIC_LASER_GROUND_LEFT + 'pointcloud', PointCloud2,
+        self.pcShovelPublisher = rospy.Publisher(self.TOPIC_LASER_SHOVEL + 'pointCloud', PointCloud2, queue_size=1)
+        self.pcGroundLeftPublisher = rospy.Publisher(self.TOPIC_LASER_GROUND_LEFT + 'pointCloud', PointCloud2,
                                                      queue_size=1)
-        self.pcGroundRightPublisher = rospy.Publisher(self.TOPIC_LASER_GROUND_RIGHT + 'pointcloud', PointCloud2,
+        self.pcGroundRightPublisher = rospy.Publisher(self.TOPIC_LASER_GROUND_RIGHT + 'pointCloud', PointCloud2,
                                                       queue_size=1)
-        self.pcSRDFrontPublisher = rospy.Publisher(self.TOPIC_LASER_SRD_FRONT + 'pointcloud', PointCloud2,
+        self.pcSRDFrontPublisher = rospy.Publisher(self.TOPIC_LASER_SRD_FRONT + 'pointCloud', PointCloud2,
                                                    queue_size=1)
-        self.pcSRDLeftPublisher = rospy.Publisher(self.TOPIC_LASER_SRD_LEFT + 'pointcloud', PointCloud2,
+        self.pcSRDLeftPublisher = rospy.Publisher(self.TOPIC_LASER_SRD_LEFT + 'pointCloud', PointCloud2,
                                                   queue_size=1)
-        self.pcSRDRightPublisher = rospy.Publisher(self.TOPIC_LASER_SRD_RIGHT + 'pointcloud', PointCloud2,
+        self.pcSRDRightPublisher = rospy.Publisher(self.TOPIC_LASER_SRD_RIGHT + 'pointCloud', PointCloud2,
                                                    queue_size=1)
 
-        self.laserShovelPublisher = rospy.Publisher(self.TOPIC_LASER_SHOVEL + 'scan', LaserScan, queue_size=1)
-        self.laserGroundLeftPublisher = rospy.Publisher(self.TOPIC_LASER_GROUND_LEFT + 'scan', LaserScan,
+        self.laserShovelPublisher = rospy.Publisher(self.TOPIC_LASER_SHOVEL + 'laserScan', LaserScan, queue_size=1)
+        self.laserGroundLeftPublisher = rospy.Publisher(self.TOPIC_LASER_GROUND_LEFT + 'laserScan', LaserScan,
                                                         queue_size=1)
-        self.laserGroundRightPublisher = rospy.Publisher(self.TOPIC_LASER_GROUND_RIGHT + 'scan', LaserScan,
+        self.laserGroundRightPublisher = rospy.Publisher(self.TOPIC_LASER_GROUND_RIGHT + 'laserScan', LaserScan,
                                                          queue_size=1)
-        self.laserSRDFrontPublisher = rospy.Publisher(self.TOPIC_LASER_SRD_FRONT + 'scan', LaserScan, queue_size=1)
-        self.laserSRDLeftPublisher = rospy.Publisher(self.TOPIC_LASER_SRD_LEFT + 'scan', LaserScan, queue_size=1)
-        self.laserSRDRightPublisher = rospy.Publisher(self.TOPIC_LASER_SRD_RIGHT + 'scan', LaserScan, queue_size=1)
+        self.laserSRDFrontPublisher = rospy.Publisher(self.TOPIC_LASER_SRD_FRONT + 'laserScan', LaserScan, queue_size=1)
+        self.laserSRDLeftPublisher = rospy.Publisher(self.TOPIC_LASER_SRD_LEFT + 'laserScan', LaserScan, queue_size=1)
+        self.laserSRDRightPublisher = rospy.Publisher(self.TOPIC_LASER_SRD_RIGHT + 'laserScan', LaserScan, queue_size=1)
 
     def createMessages(self):
         self.shovelPC = self.createPointCloudMessage(

@@ -26,7 +26,7 @@ import rospy
 from std_msgs.msg import String
 from robot_sensors import RobotSensors
 
-IP = "192.168.0.101"
+IP = "192.168.0.100"
 
 
 class RobotToolkitStream:

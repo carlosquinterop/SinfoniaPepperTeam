@@ -22,7 +22,7 @@
 //======================================================================//
 """
 
-from robot_lasers import RobotLasers
+from sensors.robot_lasers import RobotLasers
 
 
 class RobotSensors:
