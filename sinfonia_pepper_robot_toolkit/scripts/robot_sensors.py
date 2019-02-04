@@ -22,26 +22,12 @@
 //======================================================================//
 """
 
-import rospy
-from std_msgs.msg import String
-from robot_control import RobotControl
-
-IP = "192.168.0.100"
+from sensors.robot_lasers import RobotLasers
 
 
-def robotToolkitNode():
-    rospy.init_node('robot_toolkit_node', anonymous=True)
-    rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
+class RobotSensors:
 
-    robotControl = RobotControl(IP)
-    robotControl.initTopics()
-    robotControl.subscribeTopics()
-
-    rospy.spin()
-
-
-if __name__ == '__main__':
-    try:
-        robotToolkitNode()
-    except rospy.ROSInterruptException:
-        pass
+    def __init__(self, ip):
+        self.robotLaser = RobotLasers(ip=ip)
+        self.robotLaser.createMessages()
+        self.robotLaser.createPublishers()
