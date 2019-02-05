@@ -25,6 +25,8 @@
 import rospy
 from std_msgs.msg import String
 from robot_sensors import RobotSensors
+from robot_interaction import RobotInteraction
+
 
 IP = "192.168.0.100"
 
@@ -35,8 +37,9 @@ class RobotToolkitStream:
         rospy.init_node('robot_toolkit_streaming_node', anonymous=True)
         self._pub = rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
         self._rate = rospy.Rate(10)
-        self._flag = ""
+
         self._robotSensors = RobotSensors(IP)
+        self._robotInteraction = RobotInteraction(IP)
 
         self._laserTypes = {"pointCloud": [True, False],
                             "laserScan": [False, True]}
@@ -61,7 +64,7 @@ class RobotToolkitStream:
 
 if __name__ == '__main__':
     try:
-        s = RobotToolkitStream()
-        s.robotToolkitStreamingNode()
+        node = RobotToolkitStream()
+        node.robotToolkitStreamingNode()
     except rospy.ROSInterruptException:
         pass

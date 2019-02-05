@@ -22,8 +22,13 @@
 //======================================================================//
 """
 
+import rospy
+from sensors.robot_camera import RobotCamera
+from sinfonia_pepper_robot_toolkit.srv import TakePicture
+
 
 class RobotInteraction:
 
     def __init__(self, ip):
-        pass
+        self.robotCamera = RobotCamera(ip=ip)
+        rospy.Service("sIA_takePicture", TakePicture, self.robotCamera.handleTakePicture)
