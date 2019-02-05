@@ -25,11 +25,14 @@
 import time
 import utils
 import rospy
+from PIL import Image
 from std_msgs.msg import String
 from geometry_msgs.msg import Vector3
 from geometry_msgs.msg import Quaternion
+from sinfonia_pepper_robot_toolkit.srv import TakePicture
 
-TESTTOPIC = "sIA_laser"
+
+TESTTOPIC = "sIA_camera"
 
 
 def robotToolkitTestNode():
@@ -42,6 +45,8 @@ def robotToolkitTestNode():
         testMoveTo(rate)
     elif TESTTOPIC == "sIA_laser":
         testLaser(rate)
+    elif TESTTOPIC == "sIA_camera":
+        testCamera()
 
 
 def testMoveToward(rate):
@@ -107,6 +112,25 @@ def testLaser(rate):
     time.sleep(5)
     pub.publish("sIA_laser_gr.laserScan.OFF")
     time.sleep(5)
+
+
+def testCamera():
+    rospy.wait_for_service("sIA_takePicture")
+    takePicture = rospy.ServiceProxy("sIA_takePicture", TakePicture)
+    response = takePicture("Take Picture", [0, 2, 11, 30]).response
+    image = Image.frombytes("RGB", (response.width, response.height), str(bytearray(response.data)))
+    image.show()
+
+    try:
+        takePicture("Takepicture", [0, 2, 11, 30])
+    except rospy.service.ServiceException:
+        pass
+    time.sleep(5)
+
+    try:
+        takePicture("Take Picture", [0, 2, 18, 30])
+    except rospy.service.ServiceException:
+        pass
 
 
 if __name__ == '__main__':
