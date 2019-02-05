@@ -11,6 +11,8 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  sensor_msgs
+  message_generation
 )
 
 ## System dependencies are found with CMake's conventions
@@ -60,6 +62,11 @@ find_package(catkin REQUIRED COMPONENTS
 #   Service2.srv
 # )
 
+add_service_files(
+  FILES
+  TakePicture.srv
+)
+
 ## Generate actions in the 'action' folder
 # add_action_files(
 #   FILES
@@ -68,10 +75,11 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs
-# )
+generate_messages(
+  DEPENDENCIES
+  sensor_msgs
+  std_msgs
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -104,8 +112,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES sinfonia_pepper_robot_toolkit
-#  CATKIN_DEPENDS roscpp rospy std_msgs
+#  LIBRARIES pacman_controller_py
+  CATKIN_DEPENDS roscpp rospy std_msgs sensor_msgs message_runtime 
 #  DEPENDS system_lib
 )
 
