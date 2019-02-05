@@ -117,9 +117,20 @@ def testLaser(rate):
 def testCamera():
     rospy.wait_for_service("sIA_takePicture")
     takePicture = rospy.ServiceProxy("sIA_takePicture", TakePicture)
-    response = takePicture("Take Picture").response
+    response = takePicture("Take Picture", [0, 2, 11, 30]).response
     image = Image.frombytes("RGB", (response.width, response.height), str(bytearray(response.data)))
     image.show()
+
+    try:
+        takePicture("Takepicture", [0, 2, 11, 30])
+    except rospy.service.ServiceException:
+        pass
+    time.sleep(5)
+
+    try:
+        takePicture("Take Picture", [0, 2, 18, 30])
+    except rospy.service.ServiceException:
+        pass
 
 
 if __name__ == '__main__':

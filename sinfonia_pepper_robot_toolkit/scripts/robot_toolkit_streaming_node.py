@@ -35,7 +35,7 @@ class RobotToolkitStream:
 
     def __init__(self):
         rospy.init_node('robot_toolkit_streaming_node', anonymous=True)
-        self._pub = rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
+        self._errorPub = rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
         self._rate = rospy.Rate(10)
 
         self._robotSensors = RobotSensors(IP)
