@@ -122,13 +122,17 @@ def testCamera():
     image.show()
 
     try:
+        takePicture("Take Picture", [0, 2, 18, 30])
+    except rospy.service.ServiceException:
+        pass
+    time.sleep(5)
+    try:
         takePicture("Takepicture", [0, 2, 11, 30])
     except rospy.service.ServiceException:
         pass
     time.sleep(5)
-
     try:
-        takePicture("Take Picture", [0, 2, 18, 30])
+        takePicture("Take Picture", [0, 2, 11])
     except rospy.service.ServiceException:
         pass
 
