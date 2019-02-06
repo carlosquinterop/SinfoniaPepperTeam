@@ -25,14 +25,15 @@
 import time
 import utils
 import rospy
+import numpy as np
 from PIL import Image
-from std_msgs.msg import String
-from geometry_msgs.msg import Vector3
-from geometry_msgs.msg import Quaternion
+import sounddevice as sd
+from geometry_msgs.msg import Vector3, Quaternion
+from std_msgs.msg import String, Float64MultiArray
 from sinfonia_pepper_robot_toolkit.srv import TakePicture
 
 
-TESTTOPIC = "sIA_camera"
+TESTTOPIC = "sIA_mic"
 
 
 def robotToolkitTestNode():
@@ -47,6 +48,8 @@ def robotToolkitTestNode():
         testLaser(rate)
     elif TESTTOPIC == "sIA_camera":
         testCamera()
+    elif TESTTOPIC == "sIA_mic":
+        testMic(rate)
 
 
 def testMoveToward(rate):
@@ -135,6 +138,25 @@ def testCamera():
         takePicture("Take Picture", [0, 2, 11])
     except rospy.service.ServiceException:
         pass
+
+
+def testMic(rate):
+    global micData
+
+    micData = []
+    pub = rospy.Publisher("sIA_stream_from", String, queue_size=10)
+    while pub.get_num_connections() == 0:
+        rate.sleep()
+    rospy.Subscriber("sIA_mic_raw", Float64MultiArray, testMicCallback)
+    pub.publish("sIA_mic_raw.1.ON")
+    time.sleep(5)
+    pub.publish("sIA_mic_raw.1.OFF")
+    sd.play(np.array(micData), 16000, mapping=1, blocking=True)
+
+
+def testMicCallback(data):
+    global micData
+    micData += data.data
 
 
 if __name__ == '__main__':
