@@ -21,8 +21,7 @@ import rospy
 import struct
 from naoqi import ALProxy
 from std_msgs.msg import String
-from sensor_msgs.msg import LaserScan
-from sensor_msgs.msg import PointCloud2, PointField
+from sensor_msgs.msg import LaserScan, PointCloud2, PointField
 
 
 class RobotLasers:
@@ -152,7 +151,7 @@ class RobotLasers:
         self.srdLeftScan = None
         self.srdRightScan = None
 
-        self.pub = rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
+        self.errorPub = rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
         self.laserSRDFrontPublisher_test = rospy.Publisher("~/pepper_navigation/front", LaserScan, queue_size=1)
 
     def setLaser(self, laser, state):
@@ -181,7 +180,7 @@ class RobotLasers:
         self.memProxy = ALProxy("ALMemory", ip, 9559)
 
         if self.laserProxy is None or self.memProxy is None:
-            self.pub.publish("Error 0x02: Could not start either ALLaser or ALMemory Proxy")
+            self.errorPub.publish("Error 0x02: Could not start either ALLaser or ALMemory Proxy")
             exit(1)
 
     def fetchLaserValues(self, keyPrefix, scanNum):

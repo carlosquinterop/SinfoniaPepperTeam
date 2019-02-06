@@ -26,8 +26,7 @@ import utils
 import rospy
 from naoqi import ALProxy
 from std_msgs.msg import String
-from geometry_msgs.msg import Vector3
-from geometry_msgs.msg import Quaternion
+from geometry_msgs.msg import Vector3, Quaternion
 
 
 class RobotControl:
