@@ -44,6 +44,7 @@ class RobotMic(object):
         self._errorPub = rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
 
     def startProcessing(self, channel):
+        # TODO: Comprobar como funciona la relacion entre channels indices y microfonos
         channel = int(channel)
         if utils.areInRange([channel], [[1, 4]]):
             self._mic.setClientPreferences(self._moduleName, 16000, channel, 0)
