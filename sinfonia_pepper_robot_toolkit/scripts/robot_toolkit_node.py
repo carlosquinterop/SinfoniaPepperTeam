@@ -25,6 +25,7 @@
 import rospy
 from std_msgs.msg import String
 from robot_control import RobotControl
+from robot_interaction import RobotInteraction
 
 IP = "10.25.205.82"
 
@@ -35,6 +36,10 @@ def robotToolkitNode():
 
     robotControl = RobotControl(IP)
     robotControl.subscribeTopics()
+
+    robotInteraction = RobotInteraction(IP)
+    robotInteraction.initSpeakers()
+    robotInteraction.robotSpeakers.subscribeTopics()
 
     rospy.spin()
 

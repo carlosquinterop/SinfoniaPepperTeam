@@ -33,7 +33,7 @@ from std_msgs.msg import String, Float64MultiArray
 from sinfonia_pepper_robot_toolkit.srv import TakePicture
 
 
-TESTTOPIC = "sIA_mic"
+TESTTOPIC = "sIA_speakers"
 
 
 def robotToolkitTestNode():
@@ -50,6 +50,8 @@ def robotToolkitTestNode():
         testCamera()
     elif TESTTOPIC == "sIA_mic":
         testMic(rate)
+    elif TESTTOPIC == "sIA_speakers":
+        testSpeakers(rate)
 
 
 def testMoveToward(rate):
@@ -157,6 +159,16 @@ def testMic(rate):
 def testMicCallback(data):
     global micData
     micData += data.data
+
+
+def testSpeakers(rate):
+    pub = rospy.Publisher("sIA_play_audio", String, queue_size=10)
+    while pub.get_num_connections() == 0:
+        rate.sleep()
+
+    pub.publish("demo.wav")
+    time.sleep(10)
+    pub.publish("emo.wav")
 
 
 if __name__ == '__main__':

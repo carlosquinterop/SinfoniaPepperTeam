@@ -173,6 +173,7 @@ class RobotLasers:
         self.laserscan = laserscan
 
     def checkOn(self):
+
         return self.isShovel or self.isGroundLeft or self.isGroundRight or self.isSRDFront or self.isSRDLeft or self.isSRDRight
 
     def connectNaoQi(self, ip):

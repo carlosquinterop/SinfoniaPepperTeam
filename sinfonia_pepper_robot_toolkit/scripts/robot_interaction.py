@@ -24,6 +24,7 @@
 
 from interaction.robot_mic import RobotMic
 from interaction.robot_camera import RobotCamera
+from interaction.robot_speakers import RobotSpeakers
 
 
 class RobotInteraction:
@@ -33,6 +34,7 @@ class RobotInteraction:
 
         self.robotCamera = None
         self.robotMic = None
+        self.robotSpeakers = None
 
     def initCamera(self):
         self.robotCamera = RobotCamera(ip=self._ip)
@@ -41,3 +43,5 @@ class RobotInteraction:
         self.robotMic = RobotMic(app=app)
         self.robotMic.session.registerService("RobotMic", self.robotMic)
 
+    def initSpeakers(self):
+        self.robotSpeakers = RobotSpeakers(ip=self._ip)

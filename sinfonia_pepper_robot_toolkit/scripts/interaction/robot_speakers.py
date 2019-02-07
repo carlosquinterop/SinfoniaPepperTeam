@@ -22,8 +22,42 @@
 //======================================================================//
 """
 
+import os
+import rospy
+import paramiko
+from naoqi import ALProxy
+from std_msgs.msg import String
+
 
 class RobotSpeakers:
 
     def __init__(self, ip):
-        pass
+        self._ip = ip
+        self._robotPath = "/home/nao/sound.wav"
+        self._audioPlayer = ALProxy("ALAudioPlayer", self._ip, 9559)
+
+        self._errorPub = rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
+
+        self._transport = None
+        self._sftp = None
+
+    def subscribeTopics(self):
+        rospy.Subscriber("sIA_play_audio", String, self.playAudio)
+
+    def playAudio(self, data):
+        filePath = data.data
+        print(filePath)
+        self._transport = paramiko.Transport((self._ip, 22))
+        self._transport.connect(username="nao", password="nao")
+        self._sftp = paramiko.SFTPClient.from_transport(self._transport)
+
+        try:
+            self._sftp.put(os.path.dirname(os.path.abspath(__file__)) + "/../sounds/" + filePath, self._robotPath)
+        except OSError:
+            self._errorPub.publish("Error 0x03: File not found")
+            exit(1)
+
+        self._sftp.close()
+        self._transport.close()
+
+        self._audioPlayer.playFile(self._robotPath)

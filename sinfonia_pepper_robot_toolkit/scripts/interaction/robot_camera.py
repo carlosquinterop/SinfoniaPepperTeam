@@ -50,6 +50,7 @@ class RobotCamera:
         image = self._camera.getImageRemote(name)
         image = Image.frombytes("RGB", (int(image[0]), int(image[1])), image[6])
         self._camera.unsubscribe(name)
+
         return image
 
     def handleTakePicture(self, req):
@@ -66,6 +67,7 @@ class RobotCamera:
 
                 if utils.areInRange(params, criteria):
                     image = self.takePicture(params)
+
                     return TakePictureResponse(self._bridge.cv2_to_imgmsg(np.array(image, 'uint8'), "rgb8"))
                 else:
                     self._errorPub.publish("Error 0x00: Value out of range")
