@@ -24,20 +24,17 @@
 
 import qi
 import rospy
-from std_msgs.msg import String
 from robot_sensors import RobotSensors
 from robot_interaction import RobotInteraction
-from sinfonia_pepper_robot_toolkit.srv import TakePicture
 
 
 IP = "10.25.205.82"
 
 
-class RobotToolkitStream:
+class RobotToolkitStreamNode:
 
     def __init__(self):
         rospy.init_node('robot_toolkit_streaming_node', anonymous=True)
-        self._errorPub = rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
         self._rate = rospy.Rate(10)
 
         self._robotSensors = RobotSensors(IP)
@@ -45,16 +42,13 @@ class RobotToolkitStream:
         self._robotSensors.initLasers()
         self._robotSensors.robotLaser.subscribeTopics()
 
-        connectionUrl = "tcp://" + IP + ":9559"
-        app = qi.Application(["RobotMic", "--qi-url=" + connectionUrl])
         self._robotInteraction = RobotInteraction(IP)
 
         self._robotInteraction.initCamera()
 
+        app = qi.Application(["RobotMic", "--qi-url=tcp://" + IP + ":9559"])
         self._robotInteraction.initMic(app)
         self._robotInteraction.robotMic.subscribeTopics()
-
-        rospy.Service("sIA_takePicture", TakePicture, self._robotInteraction.robotCamera.handleTakePicture)
 
     def robotToolkitStreamingNode(self):
         while not rospy.is_shutdown():
@@ -67,7 +61,7 @@ class RobotToolkitStream:
 
 if __name__ == '__main__':
     try:
-        node = RobotToolkitStream()
+        node = RobotToolkitStreamNode()
         node.robotToolkitStreamingNode()
     except rospy.ROSInterruptException:
         pass

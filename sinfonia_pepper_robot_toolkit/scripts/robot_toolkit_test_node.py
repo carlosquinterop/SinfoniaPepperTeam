@@ -33,7 +33,7 @@ from std_msgs.msg import String, Float64MultiArray
 from sinfonia_pepper_robot_toolkit.srv import TakePicture
 
 
-TESTTOPIC = "sIA_speakers"
+TESTTOPIC = "sIA_moveToward"
 
 
 def robotToolkitTestNode():

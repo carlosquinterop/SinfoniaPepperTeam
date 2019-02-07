@@ -23,29 +23,32 @@
 """
 
 import rospy
-from std_msgs.msg import String
 from robot_control import RobotControl
 from robot_interaction import RobotInteraction
+
 
 IP = "10.25.205.82"
 
 
-def robotToolkitNode():
-    rospy.init_node('robot_toolkit_node', anonymous=True)
-    rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
+class RobotToolkitNode:
 
-    robotControl = RobotControl(IP)
-    robotControl.subscribeTopics()
+    def __init__(self):
+        rospy.init_node('robot_toolkit_node', anonymous=True)
 
-    robotInteraction = RobotInteraction(IP)
-    robotInteraction.initSpeakers()
-    robotInteraction.robotSpeakers.subscribeTopics()
+        self._robotControl = RobotControl(IP)
+        self._robotControl.subscribeTopics()
 
-    rospy.spin()
+        self._robotInteraction = RobotInteraction(IP)
+        self._robotInteraction.initSpeakers()
+        self._robotInteraction.robotSpeakers.subscribeTopics()
+
+    def robotToolkitNode(self):
+        rospy.spin()
 
 
 if __name__ == '__main__':
     try:
-        robotToolkitNode()
+        node = RobotToolkitNode()
+        node.robotToolkitNode()
     except rospy.ROSInterruptException:
         pass

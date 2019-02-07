@@ -39,6 +39,8 @@ class RobotCamera:
         self._camera = ALProxy("ALVideoDevice", ip, 9559)
         self._ip = ip
         self._bridge = CvBridge()
+
+        rospy.Service("sIA_takePicture", TakePicture, self.handleTakePicture)
         self._errorPub = rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
 
     def takePicture(self, params):
