@@ -22,13 +22,22 @@
 //======================================================================//
 """
 
-from interaction.robot_camera import RobotCamera
 from interaction.robot_mic import RobotMic
+from interaction.robot_camera import RobotCamera
 
 
 class RobotInteraction:
 
-    def __init__(self, ip, app):
-        self.robotCamera = RobotCamera(ip=ip)
+    def __init__(self, ip):
+        self._ip = ip
+
+        self.robotCamera = None
+        self.robotMic = None
+
+    def initCamera(self):
+        self.robotCamera = RobotCamera(ip=self._ip)
+
+    def initMic(self, app):
         self.robotMic = RobotMic(app=app)
         self.robotMic.session.registerService("RobotMic", self.robotMic)
+

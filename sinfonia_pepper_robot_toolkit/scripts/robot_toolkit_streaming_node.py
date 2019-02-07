@@ -44,7 +44,9 @@ class RobotToolkitStream:
 
         connectionUrl = "tcp://" + IP + ":9559"
         app = qi.Application(["RobotMic", "--qi-url=" + connectionUrl])
-        self._robotInteraction = RobotInteraction(IP, app)
+        self._robotInteraction = RobotInteraction(IP)
+        self._robotInteraction.initCamera()
+        self._robotInteraction.initMic(app)
 
         rospy.Service("sIA_takePicture", TakePicture, self._robotInteraction.robotCamera.handleTakePicture)
 
