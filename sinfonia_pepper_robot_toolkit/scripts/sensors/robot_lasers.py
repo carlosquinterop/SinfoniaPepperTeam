@@ -119,6 +119,11 @@ class RobotLasers:
                                         self.PARAM_LASER_SRD_RIGHT_FRAME,
                                         self.PARAM_LASER_SRD_RIGHT_FRAME_DEFAULT)
 
+        self._laserTypes = {"pointCloud": [True, False],
+                            "laserScan": [False, True]}
+        self._laserStates = {"ON": True,
+                             "OFF": False}
+
         self.isShovel = False
         self.isGroundLeft = False
         self.isGroundRight = False
@@ -153,6 +158,9 @@ class RobotLasers:
 
         self.errorPub = rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
         self.laserSRDFrontPublisher_test = rospy.Publisher("~/pepper_navigation/front", LaserScan, queue_size=1)
+
+    def subscribeTopics(self):
+        rospy.Subscriber("sIA_stream_from", String, self.callback)
 
     def setLaser(self, laser, state):
         if laser == "shovel":
@@ -417,3 +425,11 @@ class RobotLasers:
 
             # sleep
         self.laserRate.sleep()
+
+    def callback(self, data):
+        if "laser" in data.data:
+            laser = data.data.split('.')[0].split('_')[-1]
+            type = data.data.split('.')[-2]
+            state = data.data.split('.')[-1]
+            self.setType(self._laserTypes[type][0], self._laserTypes[type][1])
+            self.setLaser(laser, self._laserStates[state])

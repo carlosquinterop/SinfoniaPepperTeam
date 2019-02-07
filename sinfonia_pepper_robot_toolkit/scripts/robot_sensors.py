@@ -28,6 +28,11 @@ from sensors.robot_lasers import RobotLasers
 class RobotSensors:
 
     def __init__(self, ip):
-        self.robotLaser = RobotLasers(ip=ip)
+        self._ip = ip
+
+        self.robotLaser = None
+
+    def initLasers(self):
+        self.robotLaser = RobotLasers(ip=self._ip)
         self.robotLaser.createMessages()
         self.robotLaser.createPublishers()
