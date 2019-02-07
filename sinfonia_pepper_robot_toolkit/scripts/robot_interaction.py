@@ -22,8 +22,8 @@
 //======================================================================//
 """
 
-from sensors.robot_camera import RobotCamera
-from sensors.robot_mic import RobotMic
+from interaction.robot_camera import RobotCamera
+from interaction.robot_mic import RobotMic
 
 
 class RobotInteraction:

@@ -30,7 +30,7 @@ from robot_interaction import RobotInteraction
 from sinfonia_pepper_robot_toolkit.srv import TakePicture
 
 
-IP = "192.168.0.101"
+IP = "10.25.205.82"
 
 
 class RobotToolkitStream:

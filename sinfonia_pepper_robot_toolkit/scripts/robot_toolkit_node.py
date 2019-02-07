@@ -26,7 +26,7 @@ import rospy
 from std_msgs.msg import String
 from robot_control import RobotControl
 
-IP = "192.168.0.101"
+IP = "10.25.205.82"
 
 
 def robotToolkitNode():
