@@ -34,7 +34,6 @@ def robotToolkitNode():
     rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
 
     robotControl = RobotControl(IP)
-    robotControl.initTopics()
     robotControl.subscribeTopics()
 
     rospy.spin()

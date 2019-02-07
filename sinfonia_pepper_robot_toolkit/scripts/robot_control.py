@@ -34,15 +34,8 @@ class RobotControl:
     def __init__(self, ip):
         self._traction = ALProxy("ALMotion", ip, 9559)
         self._traction.moveInit()
-        self._topics = {"sIA_moveToward": [Vector3, 10],
-                        "sIA_stopMove": [String, 10],
-                        "sIA_rt_error_msgs": [String, 10],
-                        "sIA_moveTo": [Quaternion, 10]}
 
-    def initTopics(self):
-        for topic in self._topics.keys():
-            self._topics[topic].append(rospy.Publisher(topic, self._topics[topic][0],
-                                                       queue_size=self._topics[topic][1]))
+        self._errorPub = rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
 
     def subscribeTopics(self):
         rospy.Subscriber("sIA_moveToward", Vector3, self.moveTowardCallback)
@@ -58,11 +51,11 @@ class RobotControl:
             self._traction.post.moveToward(vx, vy, theta)
             rospy.loginfo(rospy.get_caller_id() + "I heard %s", data)
         else:
-            self._topics["sIA_rt_error_msgs"][-1].publish("Error 0x00: Value out of range")
+            self._errorPub.publish("Error 0x00: Value out of range")
 
     def stopMoveCallback(self, data):
         if data.data != "Stop":
-            self._topics["sIA_rt_error_msgs"][-1].publish("Error 0x01: Wrong message")
+            self._errorPub.publish("Error 0x01: Wrong message")
         else:
             self._traction.post.stopMove()
 
@@ -75,4 +68,4 @@ class RobotControl:
             self._traction.post.moveTo(vx, vy, theta, secs)
             rospy.loginfo(rospy.get_caller_id() + "I heard %s", data)
         else:
-            self._topics["sIA_rt_error_msgs"][-1].publish("Error 0x00: Value out of range")
+            self._errorPub.publish("Error 0x00: Value out of range")
