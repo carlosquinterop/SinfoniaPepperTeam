@@ -1,0 +1,19 @@
+<launch>
+	
+	<!-- El ira_laser_tools es el encargado de unir los laseres -->
+	<!-- Con otro topico se controla si los topicos de entrada estan activos o no -->
+	<node pkg="ira_laser_tools" name="laserscan_multi_merger" type="laserscan_multi_merger" output="screen">
+		<param name="destination_frame" value="odom" />
+		<param name="cloud_destination_topic" value="/merged_cloud" />
+		<param name="scan_destination_topic" value="/sia_merged_lasers" />
+		<param name="laserscan_topics" value="/sIA_laser_srdf/laserScan /sIA_laser_srdl/laserScan /sIA_laser_srdr/laserScan" />
+	</node>	
+
+	<!-- La informacion de salida de ira_laser_tools va al nodo de Gmapping -->
+	<node pkg="gmapping" type="slam_gmapping" name="slam" output="screen">
+		<remap from="scan" to="/sia_merged_lasers" />
+		<param name="linearUpdate" value="0.0" />
+		<param name="angularUpdate" value="0.0" />
+	</node>
+
+</launch>
