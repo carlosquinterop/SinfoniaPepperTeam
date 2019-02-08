@@ -6,7 +6,7 @@
 		<param name="destination_frame" value="odom" />
 		<param name="cloud_destination_topic" value="/merged_cloud" />
 		<param name="scan_destination_topic" value="/sia_merged_lasers" />
-		<param name="laserscan_topics" value="/sIA_laser_srdf/laserScan /sIA_laser_srdl/laserScan /sIA_laser_srdr/laserScan" />
+		<param name="laserscan_topics" value="/sIA_laser_srdf/laser_scan /sIA_laser_srdl/laser_scan /sIA_laser_srdr/laser_scan" />
 	</node>	
 
 	<!-- La informacion de salida de ira_laser_tools va al nodo de Gmapping -->

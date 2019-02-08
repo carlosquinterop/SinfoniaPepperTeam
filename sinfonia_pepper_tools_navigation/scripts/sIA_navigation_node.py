@@ -41,14 +41,14 @@ def sIANavigationNode():
             
             # Get the map through activating the lasers
             if (updateMap == True):
-                pubLaser.publish("sIA_laser_srdf.laserScan.ON")
-                pubLaser.publish("sIA_laser_srdl.laserScan.ON")
-                pubLaser.publish("sIA_laser_srdr.laserScan.ON")
+                pubLaser.publish("sIA_laser_srdf.laser_scan.ON")
+                pubLaser.publish("sIA_laser_srdl.laser_scan.ON")
+                pubLaser.publish("sIA_laser_srdr.laser_scan.ON")
 
             else:
-                pubLaser.publish("sIA_laser_srdf.laserScan.OFF")
-                pubLaser.publish("sIA_laser_srdl.laserScan.OFF")
-                pubLaser.publish("sIA_laser_srdr.laserScan.OFF")
+                pubLaser.publish("sIA_laser_srdf.laser_scan.OFF")
+                pubLaser.publish("sIA_laser_srdl.laser_scan.OFF")
+                pubLaser.publish("sIA_laser_srdr.laser_scan.OFF")
 
             # Move Pepper in a square
             if (doReactNavigation == True):
