@@ -1,2 +1,2 @@
-byte[] data
+string data
 string extension
