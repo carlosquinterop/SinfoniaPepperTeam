@@ -29,13 +29,12 @@ import rospy
 import numpy as np
 from PIL import Image
 import sounddevice as sd
-import scipy.io.wavfile as wavf
 from std_msgs.msg import String, Float64MultiArray
 from sinfonia_pepper_robot_toolkit.srv import TakePicture
-from sinfonia_pepper_robot_toolkit.msg import MoveToVector, MoveTowardVector, Wav, T2S
+from sinfonia_pepper_robot_toolkit.msg import MoveToVector, MoveTowardVector, Wav, T2S, File
 
 
-TESTTOPIC = "sIA_t2s"
+TESTTOPIC = "sIA_speakers"
 
 
 def robotToolkitTestNode():
@@ -189,26 +188,22 @@ def testMicCallback(data):
 
 
 def testSpeakers(rate):
-    pub = rospy.Publisher("sIA_play_audio", Wav, queue_size=10)
+    pub = rospy.Publisher("sIA_play_audio", File, queue_size=10)
     while pub.get_num_connections() == 0:
         rate.sleep()
 
     # Functionality test
-    msg = Wav()
+    msg = File()
     path = os.path.dirname(os.path.abspath(__file__)) + "/test_data/demo.wav"
-    msg.fs, data = wavf.read(path)
-    if len(data.shape) > 1:
-        msg.chl = list(data[:, 0])
-        msg.chr = list(data[:, 1])
-    elif len(data.shape) == 1:
-        msg.chl = list(data)
+    with open(path, "rb") as f:
+        msg.data = f.read()
 
+    msg.extension = path.split('.')[-1]
     pub.publish(msg)
 
     # Error test
-    time.sleep(5)
-    msg.chl = list(data[:, 0])
-    msg.chr = list(data[:-10, 1])
+    time.sleep(1)
+    msg.extension = "mp3"
     pub.publish(msg)
 
 
