@@ -68,6 +68,7 @@ add_message_files(
    MoveToVector.msg
    Wav.msg
    File.msg
+   T2S.msg
 )
 
 add_service_files(
