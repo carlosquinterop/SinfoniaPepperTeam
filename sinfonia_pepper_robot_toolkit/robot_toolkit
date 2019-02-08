@@ -1,0 +1,34 @@
+#!/bin/bash
+IP="$1"
+MODE="$2"
+TOPIC="$3"
+
+if [ -z ${IP} ]
+	then echo "Not enough arguments"
+	exit
+elif [ -z ${MODE} ]
+	then MODE="release"
+fi
+if [ ${MODE} = "test" ] 
+	then echo ''
+	if [ -z ${TOPIC} ]
+		then echo "Not enough arguments"
+		exit
+	fi
+fi
+
+#gnome-terminal -x bash -c BASH_POST_RC=\''source ~/pepper_sinfonia_ws/devel/setup.bash; cd launch; roslaunch robot_toolkit.launch pepper_ip:=${IP}'\''; exec bash'&
+#sleep 10
+
+gnome-terminal --command=" bash -c 'source ~/pepper_sinfonia_ws/devel/setup.bash; cd launch; roslaunch robot_toolkit.launch pepper_ip:=${IP}; $SHELL'"
+#source ~/pepper_sinfonia_ws/devel/setup.bash
+#cd launch
+#roslaunch robot_toolkit.launch pepper_ip:=${IP}
+
+sleep 5
+
+if [ ${MODE} = "test" ] 
+	then gnome-terminal --command=" bash -c 'source ~/pepper_sinfonia_ws/devel/setup.bash; cd launch; roslaunch robot_toolkit_test.launch test_topic:=${TOPIC}; $SHELL'"
+fi
+
+#roslaunch robot_toolkit_test.launch test_topic:=${TOPIC}

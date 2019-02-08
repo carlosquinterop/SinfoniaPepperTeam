@@ -1,0 +1,10 @@
+<launch>
+
+  <env name="PYTHONPATH" value="$(env PYTHONPATH)" />
+
+  <arg name="pepper_ip" />
+
+  <node name="robot_toolkit_node" pkg="sinfonia_pepper_robot_toolkit" type="robot_toolkit_node.py" output="screen" args="--pepper_ip 		$(arg pepper_ip)"></node>
+  <node name="robot_toolkit_streaming_node" pkg="sinfonia_pepper_robot_toolkit" type="robot_toolkit_streaming_node.py" output="screen" 		args="--pepper_ip $(arg pepper_ip)"></node>
+
+</launch>
