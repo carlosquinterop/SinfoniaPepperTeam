@@ -1,0 +1,2 @@
+bool doReactNav
+bool updateMap
