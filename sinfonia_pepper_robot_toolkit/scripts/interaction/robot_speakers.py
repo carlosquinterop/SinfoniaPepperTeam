@@ -25,8 +25,11 @@
 import os
 import rospy
 import paramiko
+import numpy as np
 from naoqi import ALProxy
 from std_msgs.msg import String
+import scipy.io.wavfile as wavf
+from sinfonia_pepper_robot_toolkit.msg import Wav
 
 
 class RobotSpeakers:
@@ -42,20 +45,28 @@ class RobotSpeakers:
         self._sftp = None
 
     def subscribeTopics(self):
-        rospy.Subscriber("sIA_play_audio", String, self.playAudio)
+        rospy.Subscriber("sIA_play_audio", Wav, self.playAudio)
 
     def playAudio(self, data):
-        filePath = data.data
-        print(filePath)
+        path = os.path.dirname(os.path.abspath(__file__)) + "/../.temp/temp.wav"
+
+        try:
+            if len(data.chr) == 0:
+                rawData = np.array(data.chl)
+                rawData = rawData / np.max(np.abs(rawData))
+                wavf.write(path, data.fs, rawData)
+            else:
+                rawData = np.column_stack((list(data.chl), list(data.chr)))
+                rawData[:, 0] = rawData[:, 0] / np.max(np.abs(rawData[:, 0]))
+                rawData[:, 1] = rawData[:, 1] / np.max(np.abs(rawData[:, 1]))
+                wavf.write(path, data.fs, rawData)
+        except:
+            self._errorPub.publish("Error 0x03: Unsupported data format")
+            exit(1)
+
         self._transport = paramiko.Transport((self._ip, 22))
         self._transport.connect(username="nao", password="nao")
         self._sftp = paramiko.SFTPClient.from_transport(self._transport)
-
-        try:
-            self._sftp.put(os.path.dirname(os.path.abspath(__file__)) + "/../sounds/" + filePath, self._robotPath)
-        except OSError:
-            self._errorPub.publish("Error 0x03: File not found")
-            exit(1)
 
         self._sftp.close()
         self._transport.close()

@@ -119,17 +119,16 @@ class RobotLasers:
                                         self.PARAM_LASER_SRD_RIGHT_FRAME,
                                         self.PARAM_LASER_SRD_RIGHT_FRAME_DEFAULT)
 
-        self._laserTypes = {"pointCloud": [True, False],
-                            "laserScan": [False, True]}
+        self._lasers = {"shovel": False,
+                        "gl": False,
+                        "gr": False,
+                        "srdf": False,
+                        "srdl": False,
+                        "srdr": False}
+        self._laserTypes = {"point_cloud": [True, False],
+                            "laser_scan": [False, True]}
         self._laserStates = {"ON": True,
                              "OFF": False}
-
-        self.isShovel = False
-        self.isGroundLeft = False
-        self.isGroundRight = False
-        self.isSRDFront = False
-        self.isSRDLeft = False
-        self.isSRDRight = False
 
         self.pcShovelPublisher = None
         self.pcGroundLeftPublisher = None
@@ -156,25 +155,10 @@ class RobotLasers:
         self.srdLeftScan = None
         self.srdRightScan = None
 
-        self.errorPub = rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
-        self.laserSRDFrontPublisher_test = rospy.Publisher("~/pepper_navigation/front", LaserScan, queue_size=1)
+        self._errorPub = rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
 
     def subscribeTopics(self):
         rospy.Subscriber("sIA_stream_from", String, self.callback)
-
-    def setLaser(self, laser, state):
-        if laser == "shovel":
-            self.isShovel = state
-        elif laser == "gl":
-            self.isGroundLeft = state
-        elif laser == "gr":
-            self.isGroundRight = state
-        elif laser == "srdf":
-            self.isSRDFront = state
-        elif laser == "srdl":
-            self.isSRDLeft = state
-        elif laser == "srdr":
-            self.isSRDRight = state
 
     def setType(self, pointcloud=False, laserscan=True):
         self.pointcloud = pointcloud
@@ -182,7 +166,7 @@ class RobotLasers:
 
     def checkOn(self):
 
-        return self.isShovel or self.isGroundLeft or self.isGroundRight or self.isSRDFront or self.isSRDLeft or self.isSRDRight
+        return any(self._lasers.values())
 
     def connectNaoQi(self, ip):
         self.laserProxy = ALProxy("ALLaser", ip, 9559)
@@ -248,26 +232,26 @@ class RobotLasers:
         return laserScanMsg
 
     def createPublishers(self):
-        self.pcShovelPublisher = rospy.Publisher(self.TOPIC_LASER_SHOVEL + 'pointCloud', PointCloud2, queue_size=1)
-        self.pcGroundLeftPublisher = rospy.Publisher(self.TOPIC_LASER_GROUND_LEFT + 'pointCloud', PointCloud2,
+        self.pcShovelPublisher = rospy.Publisher(self.TOPIC_LASER_SHOVEL + 'point_cloud', PointCloud2, queue_size=1)
+        self.pcGroundLeftPublisher = rospy.Publisher(self.TOPIC_LASER_GROUND_LEFT + 'point_cloud', PointCloud2,
                                                      queue_size=1)
-        self.pcGroundRightPublisher = rospy.Publisher(self.TOPIC_LASER_GROUND_RIGHT + 'pointCloud', PointCloud2,
+        self.pcGroundRightPublisher = rospy.Publisher(self.TOPIC_LASER_GROUND_RIGHT + 'point_cloud', PointCloud2,
                                                       queue_size=1)
-        self.pcSRDFrontPublisher = rospy.Publisher(self.TOPIC_LASER_SRD_FRONT + 'pointCloud', PointCloud2,
+        self.pcSRDFrontPublisher = rospy.Publisher(self.TOPIC_LASER_SRD_FRONT + 'point_cloud', PointCloud2,
                                                    queue_size=1)
-        self.pcSRDLeftPublisher = rospy.Publisher(self.TOPIC_LASER_SRD_LEFT + 'pointCloud', PointCloud2,
+        self.pcSRDLeftPublisher = rospy.Publisher(self.TOPIC_LASER_SRD_LEFT + 'point_cloud', PointCloud2,
                                                   queue_size=1)
-        self.pcSRDRightPublisher = rospy.Publisher(self.TOPIC_LASER_SRD_RIGHT + 'pointCloud', PointCloud2,
+        self.pcSRDRightPublisher = rospy.Publisher(self.TOPIC_LASER_SRD_RIGHT + 'point_cloud', PointCloud2,
                                                    queue_size=1)
 
-        self.laserShovelPublisher = rospy.Publisher(self.TOPIC_LASER_SHOVEL + 'laserScan', LaserScan, queue_size=1)
-        self.laserGroundLeftPublisher = rospy.Publisher(self.TOPIC_LASER_GROUND_LEFT + 'laserScan', LaserScan,
+        self.laserShovelPublisher = rospy.Publisher(self.TOPIC_LASER_SHOVEL + 'laser_scan', LaserScan, queue_size=1)
+        self.laserGroundLeftPublisher = rospy.Publisher(self.TOPIC_LASER_GROUND_LEFT + 'laser_scan', LaserScan,
                                                         queue_size=1)
-        self.laserGroundRightPublisher = rospy.Publisher(self.TOPIC_LASER_GROUND_RIGHT + 'laserScan', LaserScan,
+        self.laserGroundRightPublisher = rospy.Publisher(self.TOPIC_LASER_GROUND_RIGHT + 'laser_scan', LaserScan,
                                                          queue_size=1)
-        self.laserSRDFrontPublisher = rospy.Publisher(self.TOPIC_LASER_SRD_FRONT + 'laserScan', LaserScan, queue_size=1)
-        self.laserSRDLeftPublisher = rospy.Publisher(self.TOPIC_LASER_SRD_LEFT + 'laserScan', LaserScan, queue_size=1)
-        self.laserSRDRightPublisher = rospy.Publisher(self.TOPIC_LASER_SRD_RIGHT + 'laserScan', LaserScan, queue_size=1)
+        self.laserSRDFrontPublisher = rospy.Publisher(self.TOPIC_LASER_SRD_FRONT + 'laser_scan', LaserScan, queue_size=1)
+        self.laserSRDLeftPublisher = rospy.Publisher(self.TOPIC_LASER_SRD_LEFT + 'laser_scan', LaserScan, queue_size=1)
+        self.laserSRDRightPublisher = rospy.Publisher(self.TOPIC_LASER_SRD_RIGHT + 'laser_scan', LaserScan, queue_size=1)
 
     def createMessages(self):
         self.shovelPC = self.createPointCloudMessage(
@@ -324,7 +308,7 @@ class RobotLasers:
         if self.laserscan:
             # fetch values
 
-            if self.isShovel:
+            if self._lasers["shovel"]:
                 self.shovelScan.header.stamp = rospy.Time.now()
                 self.shovelScan.ranges = self.fetchLaserValues(
                     self.PEPPER_MEM_KEY_GROUND_SHOVEL,
@@ -332,7 +316,7 @@ class RobotLasers:
                 )
                 self.laserShovelPublisher.publish(self.shovelScan)
 
-            if self.isGroundLeft:
+            if self._lasers["gl"]:
                 self.groundLeftScan.header.stamp = rospy.Time.now()
                 self.groundLeftScan.ranges = self.fetchLaserValues(
                     self.PEPPER_MEM_KEY_GROUND_LEFT,
@@ -340,7 +324,7 @@ class RobotLasers:
                 )
                 self.laserGroundLeftPublisher.publish(self.groundLeftScan)
 
-            if self.isGroundRight:
+            if self._lasers["gr"]:
                 self.groundRightScan.header.stamp = rospy.Time.now()
                 self.groundRightScan.ranges = self.fetchLaserValues(
                     self.PEPPER_MEM_KEY_GROUND_RIGHT,
@@ -348,7 +332,7 @@ class RobotLasers:
                 )
                 self.laserGroundRightPublisher.publish(self.groundRightScan)
 
-            if self.isSRDFront:
+            if self._lasers["srdf"]:
                 self.srdFrontScan.header.stamp = rospy.Time.now()
                 self.srdFrontScan.ranges = self.fetchLaserValues(
                     self.PEPPER_MEM_KEY_SRD_FRONT,
@@ -356,7 +340,7 @@ class RobotLasers:
                 )
                 self.laserSRDFrontPublisher.publish(self.srdFrontScan)
 
-            if self.isSRDLeft:
+            if self._lasers["srdl"]:
                 self.srdLeftScan.header.stamp = rospy.Time.now()
                 self.srdLeftScan.ranges = self.fetchLaserValues(
                     self.PEPPER_MEM_KEY_SRD_LEFT,
@@ -364,7 +348,7 @@ class RobotLasers:
                 )
                 self.laserSRDLeftPublisher.publish(self.srdLeftScan)
 
-            if self.isSRDRight:
+            if self._lasers["srdr"]:
                 self.srdRightScan.header.stamp = rospy.Time.now()
                 self.srdRightScan.ranges = self.fetchLaserValues(
                     self.PEPPER_MEM_KEY_SRD_RIGHT,
@@ -375,7 +359,7 @@ class RobotLasers:
         if self.pointcloud:
             # fetch values
 
-            if self.isShovel:
+            if self._lasers["shovel"]:
                 self.shovelPC.header.stamp = rospy.Time.now()
                 self.shovelPC.data = self.fetchPCValues(
                     self.PEPPER_MEM_KEY_GROUND_SHOVEL,
@@ -383,7 +367,7 @@ class RobotLasers:
                 )
                 self.pcShovelPublisher.publish(self.shovelPC)
 
-            if self.isGroundLeft:
+            if self._lasers["gl"]:
                 self.groundLeftPC.header.stamp = rospy.Time.now()
                 self.groundLeftPC.data = self.fetchPCValues(
                     self.PEPPER_MEM_KEY_GROUND_LEFT,
@@ -391,7 +375,7 @@ class RobotLasers:
                 )
                 self.pcGroundLeftPublisher.publish(self.groundLeftPC)
 
-            if self.isGroundRight:
+            if self._lasers["gr"]:
                 self.groundRightPC.header.stamp = rospy.Time.now()
                 self.groundRightPC.data = self.fetchPCValues(
                     self.PEPPER_MEM_KEY_GROUND_RIGHT,
@@ -399,7 +383,7 @@ class RobotLasers:
                 )
                 self.pcGroundRightPublisher.publish(self.groundRightPC)
 
-            if self.isSRDFront:
+            if self._lasers["srdf"]:
                 self.srdFrontPC.header.stamp = rospy.Time.now()
                 self.srdFrontPC.data = self.fetchPCValues(
                     self.PEPPER_MEM_KEY_SRD_FRONT,
@@ -407,7 +391,7 @@ class RobotLasers:
                 )
                 self.pcSRDFrontPublisher.publish(self.srdFrontPC)
 
-            if self.isSRDLeft:
+            if self._lasers["srdl"]:
                 self.srdLeftPC.header.stamp = rospy.Time.now()
                 self.srdLeftPC.data = self.fetchPCValues(
                     self.PEPPER_MEM_KEY_SRD_LEFT,
@@ -415,7 +399,7 @@ class RobotLasers:
                 )
                 self.pcSRDLeftPublisher.publish(self.srdLeftPC)
 
-            if self.isSRDRight:
+            if self._lasers["srdr"]:
                 self.srdRightPC.header.stamp = rospy.Time.now()
                 self.srdRightPC.data = self.fetchPCValues(
                     self.PEPPER_MEM_KEY_SRD_RIGHT,
@@ -428,8 +412,16 @@ class RobotLasers:
 
     def callback(self, data):
         if "laser" in data.data:
-            laser = data.data.split('.')[0].split('_')[-1]
-            type = data.data.split('.')[-2]
-            state = data.data.split('.')[-1]
-            self.setType(self._laserTypes[type][0], self._laserTypes[type][1])
-            self.setLaser(laser, self._laserStates[state])
+            try:
+                laser = data.data.split('.')[0].split('_')[-1]
+                type = data.data.split('.')[-2]
+                state = data.data.split('.')[-1]
+            except:
+                self._errorPub.publish("Error 0x01: Wrong message")
+                exit(1)
+
+            if (laser in self._lasers.keys()) and (type in self._laserTypes.keys()) and (state in self._laserStates.keys()):
+                self.setType(self._laserTypes[type][0], self._laserTypes[type][1])
+                self._lasers[laser] = self._laserStates[state]
+            else:
+                self._errorPub.publish("Error 0x01: Wrong message")

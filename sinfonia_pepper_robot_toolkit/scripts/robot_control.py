@@ -26,7 +26,7 @@ import utils
 import rospy
 from naoqi import ALProxy
 from std_msgs.msg import String
-from geometry_msgs.msg import Vector3, Quaternion
+from sinfonia_pepper_robot_toolkit.msg import MoveToVector, MoveTowardVector
 
 
 class RobotControl:
@@ -38,17 +38,17 @@ class RobotControl:
         self._errorPub = rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
 
     def subscribeTopics(self):
-        rospy.Subscriber("sIA_moveToward", Vector3, self.moveTowardCallback)
-        rospy.Subscriber("sIA_stopMove", String, self.stopMoveCallback)
-        rospy.Subscriber("sIA_moveTo", Quaternion, self.moveToCallback)
+        rospy.Subscriber("sIA_move_toward", MoveTowardVector, self.moveTowardCallback)
+        rospy.Subscriber("sIA_stop_move", String, self.stopMoveCallback)
+        rospy.Subscriber("sIA_move_to", MoveToVector, self.moveToCallback)
 
     def moveTowardCallback(self, data):
-        values = [data.x, data.y, data.z]
+        values = [data.vx, data.vy, data.omega]
         criteria = [[-1, 1], [-1, 1], [-1, 1]]
 
         if utils.areInRange(values, criteria):
-            [vx, vy, theta] = values
-            self._traction.post.moveToward(vx, vy, theta)
+            [vx, vy, omega] = values
+            self._traction.post.moveToward(vx, vy, omega)
             rospy.loginfo(rospy.get_caller_id() + "I heard %s", data)
         else:
             self._errorPub.publish("Error 0x00: Value out of range")
@@ -60,12 +60,12 @@ class RobotControl:
             self._traction.post.stopMove()
 
     def moveToCallback(self, data):
-        values = [data.x, data.y, data.z, data.w]
+        values = [data.x, data.y, data.alpha, data.t]
         criteria = [[-3.14159, 3.14159]]
 
         if utils.areInRange([values[2]], criteria):
-            [vx, vy, theta, secs] = values
-            self._traction.post.moveTo(vx, vy, theta, secs)
+            [x, y, alpha, t] = values
+            self._traction.post.moveTo(x, y, alpha, t)
             rospy.loginfo(rospy.get_caller_id() + "I heard %s", data)
         else:
             self._errorPub.publish("Error 0x00: Value out of range")

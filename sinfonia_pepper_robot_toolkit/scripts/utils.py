@@ -19,8 +19,7 @@
 //======================================================================//
 """
 
-from geometry_msgs.msg import Vector3
-from geometry_msgs.msg import Quaternion
+from sinfonia_pepper_robot_toolkit.msg import MoveToVector, MoveTowardVector
 
 
 def areInRange(values, criteria):
@@ -35,14 +34,16 @@ def areInRange(values, criteria):
 def fillVector(values, dataType):
     msg = None
 
-    if dataType == "v3":
-        msg = Vector3()
-    elif dataType == 'q':
-        msg = Quaternion()
-        msg.w = values[3]
-
-    msg.x = values[0]
-    msg.y = values[1]
-    msg.z = values[2]
+    if dataType == "mtw":
+        msg = MoveTowardVector()
+        msg.vx = values[0]
+        msg.vy = values[1]
+        msg.omega = values[2]
+    elif dataType == "mt":
+        msg = MoveToVector()
+        msg.x = values[0]
+        msg.y = values[1]
+        msg.alpha = values[2]
+        msg.t = values[3]
 
     return msg

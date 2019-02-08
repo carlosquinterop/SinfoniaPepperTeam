@@ -62,6 +62,13 @@ find_package(catkin REQUIRED COMPONENTS
 #   Service2.srv
 # )
 
+add_message_files(
+   FILES
+   MoveTowardVector.msg
+   MoveToVector.msg
+   Wav.msg
+)
+
 add_service_files(
   FILES
   TakePicture.srv
