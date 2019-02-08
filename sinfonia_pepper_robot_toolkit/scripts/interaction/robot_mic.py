@@ -40,8 +40,13 @@ class RobotMic(object):
         self.micData = []
         self._moduleName = "RobotMic"
 
+        self.micFlag = False
+
         self._pub = rospy.Publisher("sIA_mic_raw", Float64MultiArray, queue_size=1)
         self._errorPub = rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
+
+    def subscribeTopics(self):
+        rospy.Subscriber("sIA_stream_from", String, self.callback)
 
     def startProcessing(self, channel):
         # TODO: Comprobar como funciona la relacion entre channels indices y microfonos
@@ -80,3 +85,13 @@ class RobotMic(object):
             signedData[i] = signedData[i]/32767.0
 
         return signedData
+
+    def callback(self, data):
+        if "mic" in data.data:
+            channel = data.data.split('.')[-2]
+            state = data.data.split('.')[-1]
+            if state == "ON":
+                self.startProcessing(channel)
+                self.micFlag = True
+            elif state == "OFF":
+                self.stopProcessing()

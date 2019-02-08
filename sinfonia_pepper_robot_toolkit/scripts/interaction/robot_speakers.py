@@ -22,50 +22,53 @@
 //======================================================================//
 """
 
-import utils
+import os
 import rospy
+import paramiko
+import numpy as np
 from naoqi import ALProxy
 from std_msgs.msg import String
-from sinfonia_pepper_robot_toolkit.msg import MoveToVector, MoveTowardVector
+import scipy.io.wavfile as wavf
+from sinfonia_pepper_robot_toolkit.msg import Wav
 
 
-class RobotControl:
+class RobotSpeakers:
 
     def __init__(self, ip):
-        self._traction = ALProxy("ALMotion", ip, 9559)
-        self._traction.moveInit()
+        self._ip = ip
+        self._robotPath = "/home/nao/sound.wav"
+        self._audioPlayer = ALProxy("ALAudioPlayer", self._ip, 9559)
 
         self._errorPub = rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
 
+        self._transport = None
+        self._sftp = None
+
     def subscribeTopics(self):
-        rospy.Subscriber("sIA_move_toward", MoveTowardVector, self.moveTowardCallback)
-        rospy.Subscriber("sIA_stop_move", String, self.stopMoveCallback)
-        rospy.Subscriber("sIA_move_to", MoveToVector, self.moveToCallback)
+        rospy.Subscriber("sIA_play_audio", Wav, self.playAudio)
 
-    def moveTowardCallback(self, data):
-        values = [data.vx, data.vy, data.omega]
-        criteria = [[-1, 1], [-1, 1], [-1, 1]]
+    def playAudio(self, data):
+        path = os.path.dirname(os.path.abspath(__file__)) + "/../.temp/temp.wav"
 
-        if utils.areInRange(values, criteria):
-            [vx, vy, omega] = values
-            self._traction.post.moveToward(vx, vy, omega)
-            rospy.loginfo(rospy.get_caller_id() + "I heard %s", data)
-        else:
-            self._errorPub.publish("Error 0x00: Value out of range")
+        try:
+            if len(data.chr) == 0:
+                rawData = np.array(data.chl)
+                rawData = rawData / np.max(np.abs(rawData))
+                wavf.write(path, data.fs, rawData)
+            else:
+                rawData = np.column_stack((list(data.chl), list(data.chr)))
+                rawData[:, 0] = rawData[:, 0] / np.max(np.abs(rawData[:, 0]))
+                rawData[:, 1] = rawData[:, 1] / np.max(np.abs(rawData[:, 1]))
+                wavf.write(path, data.fs, rawData)
+        except:
+            self._errorPub.publish("Error 0x03: Unsupported data format")
+            exit(1)
 
-    def stopMoveCallback(self, data):
-        if data.data != "Stop":
-            self._errorPub.publish("Error 0x01: Wrong message")
-        else:
-            self._traction.post.stopMove()
+        self._transport = paramiko.Transport((self._ip, 22))
+        self._transport.connect(username="nao", password="nao")
+        self._sftp = paramiko.SFTPClient.from_transport(self._transport)
 
-    def moveToCallback(self, data):
-        values = [data.x, data.y, data.alpha, data.t]
-        criteria = [[-3.14159, 3.14159]]
+        self._sftp.close()
+        self._transport.close()
 
-        if utils.areInRange([values[2]], criteria):
-            [x, y, alpha, t] = values
-            self._traction.post.moveTo(x, y, alpha, t)
-            rospy.loginfo(rospy.get_caller_id() + "I heard %s", data)
-        else:
-            self._errorPub.publish("Error 0x00: Value out of range")
+        self._audioPlayer.playFile(self._robotPath)

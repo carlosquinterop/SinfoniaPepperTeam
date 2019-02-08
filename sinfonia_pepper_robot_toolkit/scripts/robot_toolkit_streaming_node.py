@@ -24,67 +24,44 @@
 
 import qi
 import rospy
-from std_msgs.msg import String
 from robot_sensors import RobotSensors
 from robot_interaction import RobotInteraction
-from sinfonia_pepper_robot_toolkit.srv import TakePicture
 
 
-IP = "192.168.0.101"
+IP = "10.25.205.82"
 
 
-class RobotToolkitStream:
+class RobotToolkitStreamNode:
 
     def __init__(self):
         rospy.init_node('robot_toolkit_streaming_node', anonymous=True)
-        self._errorPub = rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
         self._rate = rospy.Rate(10)
 
         self._robotSensors = RobotSensors(IP)
 
-        connectionUrl = "tcp://" + IP + ":9559"
-        app = qi.Application(["RobotMic", "--qi-url=" + connectionUrl])
-        self._robotInteraction = RobotInteraction(IP, app)
+        self._robotSensors.initLasers()
+        self._robotSensors.robotLaser.subscribeTopics()
 
-        rospy.Service("sIA_takePicture", TakePicture, self._robotInteraction.robotCamera.handleTakePicture)
+        self._robotInteraction = RobotInteraction(IP)
 
-        self._laserTypes = {"pointCloud": [True, False],
-                            "laserScan": [False, True]}
-        self._laserStates = {"ON": True,
-                             "OFF": False}
+        self._robotInteraction.initCamera()
 
-        self.micFlag = False
+        app = qi.Application(["RobotMic", "--qi-url=tcp://" + IP + ":9559"])
+        self._robotInteraction.initMic(app)
+        self._robotInteraction.robotMic.subscribeTopics()
 
     def robotToolkitStreamingNode(self):
-        rospy.Subscriber("sIA_stream_from", String, self.callback)
-
         while not rospy.is_shutdown():
             if self._robotSensors.robotLaser.checkOn():
                 self._robotSensors.robotLaser.getLaserData()
-            if self.micFlag:
+            if self._robotInteraction.robotMic.micFlag:
                 self._robotInteraction.robotMic.do_nothing()
             self._rate.sleep()
-
-    def callback(self, data):
-        if "laser" in data.data:
-            laser = data.data.split('.')[0].split('_')[-1]
-            type = data.data.split('.')[-2]
-            state = data.data.split('.')[-1]
-            self._robotSensors.robotLaser.setType(self._laserTypes[type][0], self._laserTypes[type][1])
-            self._robotSensors.robotLaser.setLaser(laser, self._laserStates[state])
-        elif "mic" in data.data:
-            channel = data.data.split('.')[-2]
-            state = data.data.split('.')[-1]
-            if state == "ON":
-                self._robotInteraction.robotMic.startProcessing(channel)
-                self.micFlag = True
-            elif state == "OFF":
-                self._robotInteraction.robotMic.stopProcessing()
 
 
 if __name__ == '__main__':
     try:
-        node = RobotToolkitStream()
+        node = RobotToolkitStreamNode()
         node.robotToolkitStreamingNode()
     except rospy.ROSInterruptException:
         pass

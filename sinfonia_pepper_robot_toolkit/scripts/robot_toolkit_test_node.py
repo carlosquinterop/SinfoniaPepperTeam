@@ -22,15 +22,17 @@
 //======================================================================//
 """
 
+import os
 import time
 import utils
 import rospy
 import numpy as np
 from PIL import Image
 import sounddevice as sd
-from geometry_msgs.msg import Vector3, Quaternion
+import scipy.io.wavfile as wavf
 from std_msgs.msg import String, Float64MultiArray
 from sinfonia_pepper_robot_toolkit.srv import TakePicture
+from sinfonia_pepper_robot_toolkit.msg import MoveToVector, MoveTowardVector, Wav
 
 
 TESTTOPIC = "sIA_mic"
@@ -40,9 +42,9 @@ def robotToolkitTestNode():
     rospy.init_node('robot_toolkit_test_node', anonymous=True)
     rate = rospy.Rate(10)
 
-    if TESTTOPIC == "sIA_moveToward":
+    if TESTTOPIC == "sIA_move_toward":
         testMoveToward(rate)
-    elif TESTTOPIC == "sIA_moveTo":
+    elif TESTTOPIC == "sIA_move_to":
         testMoveTo(rate)
     elif TESTTOPIC == "sIA_laser":
         testLaser(rate)
@@ -50,13 +52,15 @@ def robotToolkitTestNode():
         testCamera()
     elif TESTTOPIC == "sIA_mic":
         testMic(rate)
+    elif TESTTOPIC == "sIA_speakers":
+        testSpeakers(rate)
 
 
 def testMoveToward(rate):
-    pub = rospy.Publisher("sIA_moveToward", Vector3, queue_size=10)
+    pub = rospy.Publisher("sIA_move_toward", MoveTowardVector, queue_size=10)
     while pub.get_num_connections() == 0:
         rate.sleep()
-    pub2 = rospy.Publisher("sIA_stopMove", String, queue_size=10)
+    pub2 = rospy.Publisher("sIA_stop_move", String, queue_size=10)
     while pub2.get_num_connections() == 0:
         rate.sleep()
 
@@ -67,15 +71,16 @@ def testMoveToward(rate):
               [0.0, -1.0, 0.0]]
 
     for vertex in square:
-        msg = utils.fillVector(vertex, "v3")
+        msg = utils.fillVector(vertex, "mtw")
         pub.publish(msg)
         time.sleep(3)
 
     stopStr = "Stop"
     pub2.publish(stopStr)
     time.sleep(3)
+
     # Error test
-    msg = utils.fillVector([0.0, -2.0, 0.0], "v3")
+    msg = utils.fillVector([0.0, -2.0, 0.0], "mtw")
     pub.publish(msg)
     time.sleep(3)
     stopStr = "Stap"
@@ -83,7 +88,7 @@ def testMoveToward(rate):
 
 
 def testMoveTo(rate):
-    pub = rospy.Publisher("sIA_moveTo", Quaternion, queue_size=10)
+    pub = rospy.Publisher("sIA_move_to", MoveToVector, queue_size=10)
     while pub.get_num_connections() == 0:
         rate.sleep()
 
@@ -94,12 +99,12 @@ def testMoveTo(rate):
               [0.0, -1.0, 0.0, 6.0]]
 
     for vertex in square:
-        msg = utils.fillVector(vertex, 'q')
+        msg = utils.fillVector(vertex, "mt")
         pub.publish(msg)
         time.sleep(8)
 
     # Error test
-    msg = utils.fillVector([0.0, -1.0, 4.0, 6.0], 'q')
+    msg = utils.fillVector([0.0, -1.0, 4.0, 6.0], "mt")
     pub.publish(msg)
 
 
@@ -107,23 +112,37 @@ def testLaser(rate):
     pub = rospy.Publisher("sIA_stream_from", String, queue_size=10)
     while pub.get_num_connections() == 0:
         rate.sleep()
-    pub.publish("sIA_laser_gl.laserScan.ON")
+
+    # Functionality test
+    pub.publish("sIA_laser_gl.laser_scan.ON")
     time.sleep(5)
-    pub.publish("sIA_laser_gr.laserScan.ON")
+    pub.publish("sIA_laser_gr.laser_scan.ON")
     time.sleep(5)
-    pub.publish("sIA_laser_gl.laserScan.OFF")
+    pub.publish("sIA_laser_gl.laser_scan.OFF")
     time.sleep(5)
-    pub.publish("sIA_laser_gr.laserScan.OFF")
+    pub.publish("sIA_laser_gr.laser_scan.OFF")
     time.sleep(5)
+
+    # Error test
+    pub.publish("sIA_laser_grlaser_scanOFF")
+    time.sleep(1)
+    pub.publish("sIA_laser_gr.laserscan.OFF")
+    time.sleep(1)
 
 
 def testCamera():
-    rospy.wait_for_service("sIA_takePicture")
-    takePicture = rospy.ServiceProxy("sIA_takePicture", TakePicture)
+    rospy.wait_for_service("sIA_take_picture")
+    takePicture = rospy.ServiceProxy("sIA_take_picture", TakePicture)
+
+    # Functionality test
     response = takePicture("Take Picture", [0, 2, 11, 30]).response
     image = Image.frombytes("RGB", (response.width, response.height), str(bytearray(response.data)))
     image.show()
+    response = takePicture("Take Picture", [1, 2, 11, 30]).response
+    image = Image.frombytes("RGB", (response.width, response.height), str(bytearray(response.data)))
+    image.show()
 
+    # Error test
     try:
         takePicture("Take Picture", [0, 2, 18, 30])
     except rospy.service.ServiceException:
@@ -147,6 +166,8 @@ def testMic(rate):
     pub = rospy.Publisher("sIA_stream_from", String, queue_size=10)
     while pub.get_num_connections() == 0:
         rate.sleep()
+
+    # Functionality test
     rospy.Subscriber("sIA_mic_raw", Float64MultiArray, testMicCallback)
     pub.publish("sIA_mic_raw.1.ON")
     time.sleep(5)
@@ -157,6 +178,30 @@ def testMic(rate):
 def testMicCallback(data):
     global micData
     micData += data.data
+
+
+def testSpeakers(rate):
+    pub = rospy.Publisher("sIA_play_audio", Wav, queue_size=10)
+    while pub.get_num_connections() == 0:
+        rate.sleep()
+
+    # Functionality test
+    msg = Wav()
+    path = os.path.dirname(os.path.abspath(__file__)) + "/test_data/demo.wav"
+    msg.fs, data = wavf.read(path)
+    if len(data.shape) > 1:
+        msg.chl = list(data[:, 0])
+        msg.chr = list(data[:, 1])
+    elif len(data.shape) == 1:
+        msg.chl = list(data)
+
+    pub.publish(msg)
+
+    # Error test
+    time.sleep(5)
+    msg.chl = list(data[:, 0])
+    msg.chr = list(data[:-10, 1])
+    pub.publish(msg)
 
 
 if __name__ == '__main__':
