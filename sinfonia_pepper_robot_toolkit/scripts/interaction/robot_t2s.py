@@ -22,8 +22,29 @@
 //======================================================================//
 """
 
+import rospy
+from naoqi import ALProxy
+from std_msgs.msg import String
+from sinfonia_pepper_robot_toolkit.msg import T2S
+
 
 class RobotT2S:
 
     def __init__(self, ip):
-        pass
+        self._t2s = ALProxy("ALTextToSpeech", ip, 9559)
+
+        self._errorPub = rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
+
+    def subscribeTopics(self):
+        rospy.Subscriber("sIA_say_something", T2S, self.saySomething)
+
+    def setLanguage(self, lang):
+        self._t2s.setLanguage(lang)
+
+    def saySomething(self, data):
+
+        if data.language == "English":
+            self.setLanguage(data.language)
+            self._t2s.say(data.text)
+        else:
+            self._errorPub.publish("Error 0x04: Language not supported")

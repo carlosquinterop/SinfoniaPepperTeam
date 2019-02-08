@@ -22,6 +22,7 @@
 //======================================================================//
 """
 
+from  interaction.robot_t2s import RobotT2S
 from interaction.robot_mic import RobotMic
 from interaction.robot_camera import RobotCamera
 from interaction.robot_speakers import RobotSpeakers
@@ -35,6 +36,7 @@ class RobotInteraction:
         self.robotCamera = None
         self.robotMic = None
         self.robotSpeakers = None
+        self.robotT2S = None
 
     def initCamera(self):
         self.robotCamera = RobotCamera(ip=self._ip)
@@ -45,3 +47,6 @@ class RobotInteraction:
 
     def initSpeakers(self):
         self.robotSpeakers = RobotSpeakers(ip=self._ip)
+
+    def initT2S(self):
+        self.robotT2S = RobotT2S(ip=self._ip)

@@ -32,10 +32,10 @@ import sounddevice as sd
 import scipy.io.wavfile as wavf
 from std_msgs.msg import String, Float64MultiArray
 from sinfonia_pepper_robot_toolkit.srv import TakePicture
-from sinfonia_pepper_robot_toolkit.msg import MoveToVector, MoveTowardVector, Wav
+from sinfonia_pepper_robot_toolkit.msg import MoveToVector, MoveTowardVector, Wav, T2S
 
 
-TESTTOPIC = "sIA_mic"
+TESTTOPIC = "sIA_t2s"
 
 
 def robotToolkitTestNode():
@@ -54,6 +54,8 @@ def robotToolkitTestNode():
         testMic(rate)
     elif TESTTOPIC == "sIA_speakers":
         testSpeakers(rate)
+    elif TESTTOPIC == "sIA_t2s":
+        testT2S(rate)
 
 
 def testMoveToward(rate):
@@ -207,6 +209,23 @@ def testSpeakers(rate):
     time.sleep(5)
     msg.chl = list(data[:, 0])
     msg.chr = list(data[:-10, 1])
+    pub.publish(msg)
+
+
+def testT2S(rate):
+    pub = rospy.Publisher("sIA_say_something", T2S, queue_size=10)
+    while pub.get_num_connections() == 0:
+        rate.sleep()
+
+    # Functionality test
+    msg = T2S()
+    msg.text = "Hi, I'm Freezer. I'm part of sinfonIA team for the RoboCup 2019"
+    msg.language = "English"
+    pub.publish(msg)
+
+    # Functionality test
+    time.sleep(1)
+    msg.language = "Spanish"
     pub.publish(msg)
 
 

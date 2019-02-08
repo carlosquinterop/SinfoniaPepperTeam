@@ -42,6 +42,9 @@ class RobotToolkitNode:
         self._robotInteraction.initSpeakers()
         self._robotInteraction.robotSpeakers.subscribeTopics()
 
+        self._robotInteraction.initT2S()
+        self._robotInteraction.robotT2S.subscribeTopics()
+
     def robotToolkitNode(self):
         rospy.spin()
 
