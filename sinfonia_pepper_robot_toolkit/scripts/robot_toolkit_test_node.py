@@ -174,6 +174,12 @@ def testMic(rate):
     pub.publish("sIA_mic_raw.1.OFF")
     sd.play(np.array(micData), 16000, mapping=1, blocking=True)
 
+    # Error test
+    time.sleep(1)
+    pub.publish("sIA_mic_raw.0.ON")
+    time.sleep(1)
+    pub.publish("sIA_mic_raw.1.O")
+
 
 def testMicCallback(data):
     global micData

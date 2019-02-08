@@ -87,11 +87,20 @@ class RobotMic(object):
         return signedData
 
     def callback(self, data):
+
         if "mic" in data.data:
-            channel = data.data.split('.')[-2]
-            state = data.data.split('.')[-1]
-            if state == "ON":
-                self.startProcessing(channel)
-                self.micFlag = True
-            elif state == "OFF":
-                self.stopProcessing()
+            try:
+                channel = data.data.split('.')[-2]
+                state = data.data.split('.')[-1]
+            except:
+                self._errorPub.publish("Error 0x01: Wrong message")
+                exit(1)
+
+            if (channel in ["1", "2", "3", "4"]) and (state in ["ON", "OFF"]):
+                if state == "ON":
+                    self.startProcessing(channel)
+                    self.micFlag = True
+                elif state == "OFF":
+                    self.stopProcessing()
+            else:
+                self._errorPub.publish("Error 0x01: Wrong message")
