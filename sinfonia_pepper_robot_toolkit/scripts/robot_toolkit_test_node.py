@@ -35,7 +35,7 @@ from sinfonia_pepper_robot_toolkit.srv import TakePicture
 from sinfonia_pepper_robot_toolkit.msg import MoveToVector, MoveTowardVector, Wav, T2S
 
 
-TESTTOPIC = "sIA_t2s"
+TESTTOPIC = "sIA_speakers"
 
 
 def robotToolkitTestNode():
@@ -195,7 +195,7 @@ def testSpeakers(rate):
 
     # Functionality test
     msg = Wav()
-    path = os.path.dirname(os.path.abspath(__file__)) + "/test_data/demo.wav"
+    path = os.path.dirname(os.path.abspath(__file__)) + "/test_data/demo2.wav"
     msg.fs, data = wavf.read(path)
     if len(data.shape) > 1:
         msg.chl = list(data[:, 0])
