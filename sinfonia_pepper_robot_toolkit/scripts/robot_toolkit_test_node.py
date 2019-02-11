@@ -23,13 +23,16 @@
 """
 
 import os
+import cv2
 import time
 import utils
 import rospy
 import argparse
 import numpy as np
-from PIL import Image
 import sounddevice as sd
+from PIL import Image as im
+from cv_bridge import CvBridge
+from sensor_msgs.msg import Image
 from std_msgs.msg import String, Float64MultiArray
 from sinfonia_pepper_robot_toolkit.srv import TakePicture
 from sinfonia_pepper_robot_toolkit.msg import MoveToVector, MoveTowardVector, Wav, T2S, File
@@ -42,6 +45,10 @@ class RobotToolkitTestNode:
         
         self._rate = rospy.Rate(10)
         self._testTopic = testTopic
+
+        self.micData = []
+        self.bridge = None
+        self.t0 = 0
 
     def robotToolkitTestNode(self):
         
@@ -59,6 +66,8 @@ class RobotToolkitTestNode:
             self.testSpeakers()
         elif self._testTopic == "sIA_t2s":
             self.testT2S()
+        elif self._testTopic == "sIA_video":
+            self.testVideo()
 
     def testMoveToward(self):
         pub = rospy.Publisher("sIA_move_toward", MoveTowardVector, queue_size=10)
@@ -137,10 +146,10 @@ class RobotToolkitTestNode:
     
         # Functionality test
         response = takePicture("Take Picture", [0, 2, 11, 30]).response
-        image = Image.frombytes("RGB", (response.width, response.height), str(bytearray(response.data)))
+        image = im.frombytes("RGB", (response.width, response.height), str(bytearray(response.data)))
         image.show()
         response = takePicture("Take Picture", [1, 2, 11, 30]).response
-        image = Image.frombytes("RGB", (response.width, response.height), str(bytearray(response.data)))
+        image = im.frombytes("RGB", (response.width, response.height), str(bytearray(response.data)))
         image.show()
     
         # Error test
@@ -148,21 +157,18 @@ class RobotToolkitTestNode:
             takePicture("Take Picture", [0, 2, 18, 30])
         except rospy.service.ServiceException:
             pass
-        time.sleep(5)
+        time.sleep(1)
         try:
             takePicture("Takepicture", [0, 2, 11, 30])
         except rospy.service.ServiceException:
             pass
-        time.sleep(5)
+        time.sleep(1)
         try:
             takePicture("Take Picture", [0, 2, 11])
         except rospy.service.ServiceException:
             pass
     
     def testMic(self):
-        global micData
-    
-        micData = []
         pub = rospy.Publisher("sIA_stream_from", String, queue_size=10)
         while pub.get_num_connections() == 0:
             self._rate.sleep()
@@ -172,7 +178,7 @@ class RobotToolkitTestNode:
         pub.publish("sIA_mic_raw.1.ON")
         time.sleep(5)
         pub.publish("sIA_mic_raw.1.OFF")
-        sd.play(np.array(micData), 16000, mapping=1, blocking=True)
+        sd.play(np.array(self.micData), 16000, mapping=1, blocking=True)
     
         # Error test
         time.sleep(1)
@@ -181,8 +187,7 @@ class RobotToolkitTestNode:
         pub.publish("sIA_mic_raw.1.O")
     
     def testMicCallback(self, data):
-        global micData
-        micData += data.data
+        self.micData += data.data
     
     def testSpeakers(self):
         pub = rospy.Publisher("sIA_play_audio", File, queue_size=10)
@@ -214,10 +219,46 @@ class RobotToolkitTestNode:
         msg.language = "English"
         pub.publish(msg)
     
-        # Functionality test
+        # Error test
         time.sleep(1)
         msg.language = "Spanish"
         pub.publish(msg)
+
+    def testVideo(self):
+        self.bridge = CvBridge()
+
+        pub = rospy.Publisher("sIA_stream_from", String, queue_size=10)
+        while pub.get_num_connections() == 0:
+            self._rate.sleep()
+        rospy.Subscriber("sIA_video_stream", Image, self.testVideoCallback)
+
+        # Functionality test
+        pub.publish("sIA_video_stream.0.1.11.30.ON")
+        self.t0 = time.time()
+        time.sleep(5)
+        pub.publish("sIA_video_stream.0.1.11.30.OFF")
+
+        # Error test
+        time.sleep(1)
+        pub.publish("sIA_video_stream.0.1.11.ON")
+        time.sleep(1)
+        pub.publish("sIA_videostream.0.1.11.30.ON")
+        time.sleep(1)
+        pub.publish("sIA_video_stream.3.1.11.30.ON")
+        time.sleep(1)
+        pub.publish("sIA_video_stream.0.1.11.30.O")
+        time.sleep(1)
+        pub.publish("sIA_video_stream.0.a.11.30.ON")
+
+    def testVideoCallback(self, image):
+        framerate = int(1/(time.time()-self.t0))
+        self.t0 = time.time()
+        frame = self.bridge.imgmsg_to_cv2(image, "rgb8")
+        print("Framerate: " + str(framerate) + " fps")
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        cv2.namedWindow("Video")
+        cv2.imshow("Video", frame)
+        cv2.waitKey(10)
 
 
 if __name__ == '__main__':

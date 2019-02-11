@@ -47,3 +47,12 @@ def fillVector(values, dataType):
         msg.t = values[3]
 
     return msg
+
+
+def checkCameraSettings(params):
+    if areInRange([params[1]], [[0, 2]]):
+        criteria = [[0, 1], [0, 4], [0, 16], [1, 30]]
+    elif areInRange([params[1]], [[3, 4]]):
+        criteria = [[0, 1], [0, 4], [0, 16], [1, 1]]
+
+    return areInRange(params, criteria)
