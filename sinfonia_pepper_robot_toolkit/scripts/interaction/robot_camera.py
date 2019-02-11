@@ -26,10 +26,11 @@ import utils
 import rospy
 import random
 import numpy as np
-from PIL import Image
 from naoqi import ALProxy
+from PIL import Image as im
 from cv_bridge import CvBridge
 from std_msgs.msg import String
+from sensor_msgs.msg import Image
 from sinfonia_pepper_robot_toolkit.srv import TakePicture, TakePictureResponse
 
 
@@ -43,35 +44,92 @@ class RobotCamera:
         rospy.Service("sIA_take_picture", TakePicture, self.handleTakePicture)
         self._errorPub = rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
 
-    def takePicture(self, params):
-        name = str(self._ip + "_" + str(random.randint(0, 99999)))
-        name = self._camera.subscribeCamera(name, params[0], params[1], params[2], params[3])
-        self._camera.openCamera(0)
-        self._camera.startCamera(0)
+        self.name = None
+        self.cameraParams = []
+        self.isStreaming = False
 
-        image = self._camera.getImageRemote(name)
-        image = Image.frombytes("RGB", (int(image[0]), int(image[1])), image[6])
-        self._camera.unsubscribe(name)
+        self.videoPublisher = None
+
+    def subscribeTopics(self):
+        rospy.Subscriber("sIA_stream_from", String, self.handleStreamVideo)
+
+    def createPublishers(self):
+        self.videoPublisher = rospy.Publisher("sIA_video_stream", Image, queue_size=1)
+
+    def subscribeCamera(self):
+        self.name = str(self._ip + "_" + str(random.randint(0, 99999)))
+        self.name = self._camera.subscribeCamera(self.name, self.cameraParams[0], self.cameraParams[1],
+                                                 self.cameraParams[2], self.cameraParams[3])
+
+    def unsubscribeCamera(self):
+        self._camera.unsubscribe(self.name)
+        self.name = None
+
+    def takePicture(self):
+        self.subscribeCamera()
+        image = self._camera.getImageRemote(self.name)
+        image = im.frombytes("RGB", (int(image[0]), int(image[1])), image[6])
+        self.unsubscribeCamera()
 
         return image
+
+    def streamVideo(self):
+
+        try:
+            if self.name is None:
+                self.subscribeCamera()
+            image = self._camera.getImageRemote(self.name)
+            image = im.frombytes("RGB", (int(image[0]), int(image[1])), image[6])
+            image = self._bridge.cv2_to_imgmsg(np.array(image, 'uint8'), "rgb8")
+            self.videoPublisher.publish(image)
+        except TypeError:
+            self._errorPub.publish("Error 0x06: Camera closed beforehand")
+            return
 
     def handleTakePicture(self, req):
 
         if req.command == "Take Picture":
-            if len(req.params) != 4:
-                self._errorPub.publish("Error 0x02: Wrong number of params")
-            else:
-                params = list(req.params)
-                if utils.areInRange([params[1]], [[0, 2]]):
-                    criteria = [[0, 1], [0, 4], [0, 16], [1, 30]]
-                elif utils.areInRange([params[1]], [[3, 4]]):
-                    criteria = [[0, 1], [0, 4], [0, 16], [1, 1]]
-
-                if utils.areInRange(params, criteria):
-                    image = self.takePicture(params)
-
-                    return TakePictureResponse(self._bridge.cv2_to_imgmsg(np.array(image, 'uint8'), "rgb8"))
+            if self.name is None:
+                if len(req.params) != 4:
+                    self._errorPub.publish("Error 0x02: Wrong number of params")
                 else:
-                    self._errorPub.publish("Error 0x00: Value out of range")
+                    params = list(req.params)
+                    if utils.checkCameraSettings(params):
+                        self.cameraParams = params
+                        image = self.takePicture()
+                        return TakePictureResponse(self._bridge.cv2_to_imgmsg(np.array(image, 'uint8'), "rgb8"))
+                    else:
+                        self._errorPub.publish("Error 0x00: Value out of range")
+            else:
+                self._errorPub.publish("Error 0x05: Resource is already in use")
+
+        else:
+            self._errorPub.publish("Error 0x01: Wrong message")
+
+    def handleStreamVideo(self, data):
+
+        if "sIA_video_stream" in data.data:
+            request = data.data.split(".")[1:]
+            if len(request) == 5:
+                state = request[-1]
+
+                try:
+                    params = map(int, request[:-1])
+                except ValueError:
+                    self._errorPub.publish("Error 0x01: Wrong message")
+                    return
+                if state == "ON":
+                    if utils.checkCameraSettings(params):
+                        self.cameraParams = params
+                        self.isStreaming = True
+                    else:
+                        self._errorPub.publish("Error 0x00: Value out of range")
+                elif state == "OFF":
+                    self.unsubscribeCamera()
+                    self.isStreaming = False
+                else:
+                    self._errorPub.publish("Error 0x01: Wrong message")
+            else:
+                self._errorPub.publish("Error 0x02: Wrong number of params")
         else:
             self._errorPub.publish("Error 0x01: Wrong message")

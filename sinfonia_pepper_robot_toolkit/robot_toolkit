@@ -19,7 +19,7 @@ fi
 
 gnome-terminal --command=" bash -c 'source ~/pepper_sinfonia_ws/devel/setup.bash; cd launch; roslaunch robot_toolkit.launch pepper_ip:=${IP}; $SHELL'"&
 
-sleep 5
+sleep 7
 
 if [ ${MODE} = "test" ] 
 	then gnome-terminal --command=" bash -c 'source ~/pepper_sinfonia_ws/devel/setup.bash; cd launch; roslaunch robot_toolkit_test.launch test_topic:=${TOPIC}; $SHELL'"&

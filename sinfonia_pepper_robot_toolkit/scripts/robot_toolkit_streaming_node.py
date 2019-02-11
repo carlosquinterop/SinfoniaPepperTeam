@@ -43,6 +43,8 @@ class RobotToolkitStreamNode:
         self._robotInteraction = RobotInteraction(ip)
 
         self._robotInteraction.initCamera()
+        self._robotInteraction.robotCamera.subscribeTopics()
+        self._robotInteraction.robotCamera.createPublishers()
 
         app = qi.Application(["RobotMic", "--qi-url=tcp://" + ip + ":9559"])
         self._robotInteraction.initMic(app)
@@ -54,6 +56,8 @@ class RobotToolkitStreamNode:
                 self._robotSensors.robotLaser.getLaserData()
             if self._robotInteraction.robotMic.micFlag:
                 self._robotInteraction.robotMic.do_nothing()
+            if self._robotInteraction.robotCamera.isStreaming:
+                self._robotInteraction.robotCamera.streamVideo()
             self._rate.sleep()
 
 
