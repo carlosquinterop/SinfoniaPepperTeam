@@ -86,6 +86,23 @@ class RobotCamera:
             self._errorPub.publish("Error 0x06: Camera closed beforehand")
             return
 
+    def takeDepthMap(self):
+        self.subscribeCamera()
+        image = self._camera.getImageRemote(self.name)
+        self.unsubscribeCamera()
+
+        img = Image()
+        img.header.stamp = rospy.Time(image[4] + image[5] * 1e-6)
+        img.header.frame_id = "2"
+        img.height = image[1]
+        img.width = image[0]
+        nbLayers = image[2]
+        img.encoding = "16UC1"
+        img.step = img.width * nbLayers
+        img.data = image[6]
+
+        return img
+
     def handleTakePicture(self, req):
 
         if req.command == "Take Picture":
@@ -94,15 +111,18 @@ class RobotCamera:
                     self._errorPub.publish("Error 0x02: Wrong number of params")
                 else:
                     params = list(req.params)
-                    if utils.checkCameraSettings(params):
+                    if utils.checkCameraSettings(params, "camera"):
                         self.cameraParams = params
-                        image = self.takePicture()
-                        return TakePictureResponse(self._bridge.cv2_to_imgmsg(np.array(image, 'uint8'), "rgb8"))
+                        if utils.areInRange([params[0]], [[0, 1]]):
+                            image = self.takePicture()
+                            return TakePictureResponse(self._bridge.cv2_to_imgmsg(np.array(image, 'uint8'), "rgb8"))
+                        elif params[0] == 2:
+                            msg = self.takeDepthMap()
+                            return TakePictureResponse(msg)
                     else:
                         self._errorPub.publish("Error 0x00: Value out of range")
             else:
                 self._errorPub.publish("Error 0x05: Resource is already in use")
-
         else:
             self._errorPub.publish("Error 0x01: Wrong message")
 
@@ -119,7 +139,7 @@ class RobotCamera:
                     self._errorPub.publish("Error 0x01: Wrong message")
                     return
                 if state == "ON":
-                    if utils.checkCameraSettings(params):
+                    if utils.checkCameraSettings(params, "video"):
                         self.cameraParams = params
                         self.isStreaming = True
                     else:
