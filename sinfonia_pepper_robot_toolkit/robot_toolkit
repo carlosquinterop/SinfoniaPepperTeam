@@ -17,7 +17,7 @@ if [ ${MODE} = "test" ]
 	fi
 fi
 
-gnome-terminal --command=" bash -c 'source ~/pepper_sinfonia_ws/devel/setup.bash; cd launch; roslaunch robot_toolkit.launch pepper_ip:=${IP}; $SHELL'"&
+gnome-terminal --command=" bash -c 'source ~/pepper_sinfonia_ws/devel/setup.bash; cd launch; roslaunch robot_toolkit.launch nao_ip:=${IP}; $SHELL'"&
 
 sleep 7
 
