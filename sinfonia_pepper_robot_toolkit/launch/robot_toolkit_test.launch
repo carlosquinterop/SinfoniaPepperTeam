@@ -1,0 +1,9 @@
+<launch>
+
+  <env name="PYTHONPATH" value="$(env PYTHONPATH)" />
+
+  <arg name="test_topic" />
+
+  <node name="robot_toolkit_test_node" pkg="sinfonia_pepper_robot_toolkit" type="robot_toolkit_test_node.py" output="screen" args="--test_topic $(arg test_topic)"></node>
+
+</launch>

@@ -1,0 +1,33 @@
+#!/bin/bash
+IP="$1"
+MODE="$2"
+TOPIC="$3"
+
+if [ -z ${IP} ]
+	then echo "Not enough arguments"
+	exit
+elif [ -z ${MODE} ]
+	then MODE="release"
+fi
+if [ ${MODE} = "test" ] 
+	then :
+	if [ -z ${TOPIC} ]
+		then echo "Not enough arguments"
+		exit
+	fi
+fi
+
+gnome-terminal --command=" bash -c 'source ~/pepper_sinfonia_ws/devel/setup.bash; cd launch; roslaunch robot_toolkit.launch nao_ip:=${IP}; $SHELL'"&
+
+sleep 7
+
+if [ ${MODE} = "test" ] 
+	then gnome-terminal --command=" bash -c 'source ~/pepper_sinfonia_ws/devel/setup.bash; cd launch; roslaunch robot_toolkit_test.launch test_topic:=${TOPIC}; $SHELL'"&
+	gnome-terminal --command=" bash -c 'rostopic echo /sIA_rt_error_msgs; $SHELL'"&
+	if [ ${TOPIC} = "sIA_laser" ]
+		then gnome-terminal --command=" bash -c 'rostopic echo /sIA_laser_gl/laser_scan; $SHELL'"&
+		gnome-terminal --command=" bash -c 'rostopic echo /sIA_laser_gr/laser_scan; $SHELL'"&
+	elif [ ${TOPIC} = "sIA_mic" ]
+		then gnome-terminal --command=" bash -c 'rostopic echo /sIA_mic_raw; $SHELL'"&
+	fi
+fi

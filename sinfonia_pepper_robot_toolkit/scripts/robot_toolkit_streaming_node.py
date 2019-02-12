@@ -24,29 +24,29 @@
 
 import qi
 import rospy
+import argparse
 from robot_sensors import RobotSensors
 from robot_interaction import RobotInteraction
 
 
-IP = "10.25.205.82"
-
-
 class RobotToolkitStreamNode:
 
-    def __init__(self):
+    def __init__(self, ip):
         rospy.init_node('robot_toolkit_streaming_node', anonymous=True)
         self._rate = rospy.Rate(10)
 
-        self._robotSensors = RobotSensors(IP)
+        self._robotSensors = RobotSensors(ip)
 
         self._robotSensors.initLasers()
         self._robotSensors.robotLaser.subscribeTopics()
 
-        self._robotInteraction = RobotInteraction(IP)
+        self._robotInteraction = RobotInteraction(ip)
 
         self._robotInteraction.initCamera()
+        self._robotInteraction.robotCamera.subscribeTopics()
+        self._robotInteraction.robotCamera.createPublishers()
 
-        app = qi.Application(["RobotMic", "--qi-url=tcp://" + IP + ":9559"])
+        app = qi.Application(["RobotMic", "--qi-url=tcp://" + ip + ":9559"])
         self._robotInteraction.initMic(app)
         self._robotInteraction.robotMic.subscribeTopics()
 
@@ -56,12 +56,23 @@ class RobotToolkitStreamNode:
                 self._robotSensors.robotLaser.getLaserData()
             if self._robotInteraction.robotMic.micFlag:
                 self._robotInteraction.robotMic.do_nothing()
+            if self._robotInteraction.robotCamera.isStreaming:
+                self._robotInteraction.robotCamera.streamVideo()
             self._rate.sleep()
 
 
 if __name__ == '__main__':
     try:
-        node = RobotToolkitStreamNode()
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--pepper_ip", type=str, default="127.0.0.1",
+                            help="Robot IP address. On robot or Local Naoqi: use '127.0.0.1'.")
+        parser.add_argument("__name", type=str, default="",
+                            help="Name of the node.")
+        parser.add_argument("__log", type=str, default="",
+                            help="Auto generated log file path.")
+        args = parser.parse_args()
+
+        node = RobotToolkitStreamNode(args.pepper_ip)
         node.robotToolkitStreamingNode()
     except rospy.ROSInterruptException:
         pass

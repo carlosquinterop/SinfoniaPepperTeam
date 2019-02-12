@@ -22,31 +22,29 @@
 //======================================================================//
 """
 
-from  interaction.robot_t2s import RobotT2S
-from interaction.robot_mic import RobotMic
-from interaction.robot_camera import RobotCamera
-from interaction.robot_speakers import RobotSpeakers
+import rospy
+from naoqi import ALProxy
+from std_msgs.msg import String
+from sinfonia_pepper_robot_toolkit.msg import T2S
 
 
-class RobotInteraction:
+class RobotT2S:
 
     def __init__(self, ip):
-        self._ip = ip
+        self._t2s = ALProxy("ALTextToSpeech", ip, 9559)
 
-        self.robotCamera = None
-        self.robotMic = None
-        self.robotSpeakers = None
-        self.robotT2S = None
+        self._errorPub = rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
 
-    def initCamera(self):
-        self.robotCamera = RobotCamera(ip=self._ip)
+    def subscribeTopics(self):
+        rospy.Subscriber("sIA_say_something", T2S, self.saySomething)
 
-    def initMic(self, app):
-        self.robotMic = RobotMic(app=app)
-        self.robotMic.session.registerService("RobotMic", self.robotMic)
+    def setLanguage(self, lang):
+        self._t2s.setLanguage(lang)
 
-    def initSpeakers(self):
-        self.robotSpeakers = RobotSpeakers(ip=self._ip)
+    def saySomething(self, data):
 
-    def initT2S(self):
-        self.robotT2S = RobotT2S(ip=self._ip)
+        if data.language == "English":
+            self.setLanguage(data.language)
+            self._t2s.say(data.text)
+        else:
+            self._errorPub.publish("Error 0x04: Language not supported")

@@ -1,0 +1,16 @@
+<launch>
+
+  <env name="PYTHONPATH" value="$(env PYTHONPATH)" />
+
+  <arg name="nao_ip" />
+  <arg name="force_python" default="true" />
+
+  <include file="$(find pepper_description)/launch/pepper_publisher.launch" />
+  <include file="/opt/ros/kinetic/share/naoqi_driver_py/launch/naoqi_driver.launch">
+    <arg name="nao_ip" value="$(arg nao_ip)" />
+  </include>
+
+  <node name="robot_toolkit_node" pkg="sinfonia_pepper_robot_toolkit" type="robot_toolkit_node.py" output="screen" args="--pepper_ip $(arg nao_ip)"></node>
+  <node name="robot_toolkit_streaming_node" pkg="sinfonia_pepper_robot_toolkit" type="robot_toolkit_streaming_node.py" output="screen" args="--pepper_ip $(arg nao_ip)"></node>
+
+</launch>

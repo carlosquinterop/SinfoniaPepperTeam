@@ -1,0 +1,5 @@
+string name
+bool cvWindow
+---
+string personId
+string features
