@@ -27,6 +27,7 @@ import cv2
 import time
 import utils
 import rospy
+import struct
 import argparse
 import numpy as np
 import sounddevice as sd
@@ -68,6 +69,8 @@ class RobotToolkitTestNode:
             self.testT2S()
         elif self._testTopic == "sIA_video":
             self.testVideo()
+        elif self._testTopic == "sIA_depth_camera":
+            self.testDepthCamera()
 
     def testMoveToward(self):
         pub = rospy.Publisher("sIA_move_toward", MoveTowardVector, queue_size=10)
@@ -138,13 +141,13 @@ class RobotToolkitTestNode:
         takePicture = rospy.ServiceProxy("sIA_take_picture", TakePicture)
     
         # Functionality test
-        response = takePicture("Take Picture", [0, 2, 11, 30]).response
+        response = takePicture("Take Picture", [0, 2, 11, 15]).response
         image = im.frombytes("RGB", (response.width, response.height), str(bytearray(response.data)))
         image.show()
-        response = takePicture("Take Picture", [1, 2, 11, 30]).response
+        response = takePicture("Take Picture", [1, 2, 11, 15]).response
         image = im.frombytes("RGB", (response.width, response.height), str(bytearray(response.data)))
         image.show()
-    
+
         # Error test
         try:
             takePicture("Take Picture", [0, 2, 18, 30])
@@ -252,6 +255,28 @@ class RobotToolkitTestNode:
         cv2.namedWindow("Video")
         cv2.imshow("Video", frame)
         cv2.waitKey(10)
+
+    def testDepthCamera(self):
+        rospy.wait_for_service("sIA_take_picture")
+        takePicture = rospy.ServiceProxy("sIA_take_picture", TakePicture)
+
+        # Functionality test
+        distances = []
+        response = takePicture("Take Picture", [2, 1, 17, 1]).response
+        for i in range(0, len(response.data) - 1, 2):
+            distances.append(struct.unpack('<H', response.data[i:i + 2])[0])
+
+        distArray = np.array(distances, dtype=float).reshape(240, 320)
+        normDistArray = (distArray * 255) / np.max(distArray)
+        normDistArray = cv2.convertScaleAbs(normDistArray)
+        image = im.fromarray(255 - normDistArray)
+        image.show()
+
+        # Error test
+        try:
+            takePicture("Take Picture", [2, 1, 17, 30])
+        except rospy.service.ServiceException:
+            pass
 
 
 if __name__ == '__main__':
