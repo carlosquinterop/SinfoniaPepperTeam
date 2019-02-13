@@ -16,9 +16,13 @@
 # limitations under the License.
 #
 
+import os
+import time
 import math
 import rospy
 import struct
+import signal
+import subprocess
 from naoqi import ALProxy
 from std_msgs.msg import String
 from sensor_msgs.msg import LaserScan, PointCloud2, PointField
@@ -154,6 +158,9 @@ class RobotLasers:
         self.srdFrontScan = None
         self.srdLeftScan = None
         self.srdRightScan = None
+
+        self._merge = False
+        self._mergePid = None
 
         self._errorPub = rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
 
@@ -413,17 +420,48 @@ class RobotLasers:
     def callback(self, data):
 
         if "laser" in data.data:
-            try:
-                laser = data.data.split('.')[0].split('_')[-1]
-                scanType = data.data.split('.')[-2]
-                state = data.data.split('.')[-1]
+            if "merge" in data.data:
+                try:
+                    state = data.data.split('.')[-1]
+                    if (state == "ON") and (not self._merge):
+                        for key in self._lasers.keys():
+                            if "srd" in key:
+                                self._lasers[key] = True
 
-                if (laser in self._lasers.keys()) and (scanType in self._laserTypes.keys()) and (
-                        state in self._laserStates.keys()):
-                    self.setType(self._laserTypes[scanType][0], self._laserTypes[scanType][1])
-                    self._lasers[laser] = self._laserStates[state]
-                else:
+                        self.setType(False, True)
+                        self._merge = True
+                        subprocess.Popen(
+                            ["gnome-terminal", "--command", "bash -c 'source ~/pepper_sinfonia_ws/devel/setup.bash; "
+                                                            "roslaunch ira_laser_tools laserscan_multi_merger.launch "
+                                                            "--pid=~/pepper_sinfonia_ws/src/sinfonia_pepper_robot_toolkit/scripts/.temp/pid.txt'"],
+                            preexec_fn=os.setsid)
+                    elif state == "OFF":
+                        path = os.path.dirname(os.path.abspath(__file__)) + "/../.temp/pid.txt"
+                        with open(path, 'r') as f:
+                            pid = f.read()
+
+                        os.killpg(os.getpgid(int(pid)), signal.SIGTERM)
+
+                        self._merge = False
+
+                        for key in self._lasers.keys():
+                            if "srd" in key:
+                                self._lasers[key] = False
+                except:
                     self._errorPub.publish("Error 0x01: Wrong message [lasers]")
-            except:
-                self._errorPub.publish("Error 0x01: Wrong message [lasers]")
-                return
+                    return
+            else:
+                try:
+                    laser = data.data.split('.')[0].split('_')[-1]
+                    scanType = data.data.split('.')[-2]
+                    state = data.data.split('.')[-1]
+
+                    if (laser in self._lasers.keys()) and (scanType in self._laserTypes.keys()) and (
+                            state in self._laserStates.keys()):
+                        self.setType(self._laserTypes[scanType][0], self._laserTypes[scanType][1])
+                        self._lasers[laser] = self._laserStates[state]
+                    else:
+                        self._errorPub.publish("Error 0x01: Wrong message [lasers]")
+                except:
+                    self._errorPub.publish("Error 0x01: Wrong message [lasers]")
+                    return

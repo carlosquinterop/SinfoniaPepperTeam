@@ -73,6 +73,8 @@ class RobotToolkitTestNode:
             self.testDepthCamera()
         elif self._testTopic == "sIA_sonars":
             self.testSonars()
+        elif self._testTopic == "sIA_merge":
+            self.testMerge()
 
     def testMoveToward(self):
         pub = rospy.Publisher("sIA_move_toward", MoveTowardVector, queue_size=10)
@@ -138,8 +140,8 @@ class RobotToolkitTestNode:
         time.sleep(5)
         pub.publish("sIA_laser_gr.laser_scan.OFF")
         time.sleep(5)
-    
-        # Error test
+
+        # # Error test
         pub.publish("sIA_laser_grlaser_scanOFF")
         time.sleep(1)
         pub.publish("sIA_laser_gr.laserscan.OFF")
@@ -300,7 +302,14 @@ class RobotToolkitTestNode:
         pub.publish("sIA_sonar_font.OFF")
         pub.publish("sIA_sonar_back.ONN")
 
+    def testMerge(self):
+        pub = rospy.Publisher("sIA_stream_from", String, queue_size=10)
+        while pub.get_num_connections() == 0:
+            self._rate.sleep()
 
+        pub.publish("sIA_laser_merge.laser_scan.ON")
+        time.sleep(30)
+        pub.publish("sIA_laser_merge.laser_scan.OFF")
 
 
 if __name__ == '__main__':
