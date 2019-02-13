@@ -1,8 +1,8 @@
 <launch>
     <param name="use_sim_time" value="false"/>
     <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen">
-      <remap from="scan" to="/sIA_laser_srdf/laser_scan"/>
-      <param name="map_update_interval" value="5.0"/>
+      <remap from="scan" to="/sIA_merged_laser"/>
+      <param name="map_update_interval" value="0.5"/>
       <param name="maxUrange" value="16.0"/>
       <param name="sigma" value="0.05"/>
       <param name="kernelSize" value="1"/>
@@ -30,5 +30,6 @@
       <param name="llsamplestep" value="0.01"/>
       <param name="lasamplerange" value="0.005"/>
       <param name="lasamplestep" value="0.005"/>
+      <param name="transformPublishPeriod" value="0"/>
     </node>
 </launch>
