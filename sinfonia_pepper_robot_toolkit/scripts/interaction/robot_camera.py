@@ -136,20 +136,18 @@ class RobotCamera:
                 try:
                     params = map(int, request[:-1])
                 except ValueError:
-                    self._errorPub.publish("Error 0x01: Wrong message")
+                    self._errorPub.publish("Error 0x01: Wrong message [camera]")
                     return
                 if state == "ON":
                     if utils.checkCameraSettings(params, "video"):
                         self.cameraParams = params
                         self.isStreaming = True
                     else:
-                        self._errorPub.publish("Error 0x00: Value out of range")
+                        self._errorPub.publish("Error 0x00: Value out of range [camera]")
                 elif state == "OFF":
                     self.unsubscribeCamera()
                     self.isStreaming = False
                 else:
-                    self._errorPub.publish("Error 0x01: Wrong message")
+                    self._errorPub.publish("Error 0x01: Wrong message [camera]")
             else:
-                self._errorPub.publish("Error 0x02: Wrong number of params")
-        else:
-            self._errorPub.publish("Error 0x01: Wrong message")
+                self._errorPub.publish("Error 0x02: Wrong number of  [camera]")

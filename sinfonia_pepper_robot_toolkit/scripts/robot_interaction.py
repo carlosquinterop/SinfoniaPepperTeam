@@ -22,7 +22,7 @@
 //======================================================================//
 """
 
-from  interaction.robot_t2s import RobotT2S
+from interaction.robot_t2s import RobotT2S
 from interaction.robot_mic import RobotMic
 from interaction.robot_camera import RobotCamera
 from interaction.robot_speakers import RobotSpeakers
