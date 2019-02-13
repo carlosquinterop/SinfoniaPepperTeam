@@ -95,20 +95,19 @@ class RobotSonars:
         self.backSonarPublisher = rospy.Publisher("sIA_sonar_back", Range, queue_size=5)
 
     def callback(self, data):
-        sonar = ""
-        state = ""
+
         if "sonar" in data.data:
             try:
                 sonar = data.data.split('.')[0].split('_')[-1]
                 state = data.data.split('.')[-1]
+
+                if (sonar in self._sonars.keys()) and (state in self._sonarsStates.keys()):
+                    self._sonars[sonar] = self._sonarsStates[state]
+                else:
+                    self._errorPub.publish("Error 0x01: Wrong message [sonars]")
             except:
                 self._errorPub.publish("Error 0x01: Wrong message [sonars]")
-                exit(1)
-
-            if (sonar in self._sonars.keys()) and (state in self._sonarsStates.keys()):
-                self._sonars[sonar] = self._sonarsStates[state]
-            else:
-                self._errorPub.publish("Error 0x01: Wrong message [sonars]")
+                return
 
     def checkOn(self):
 

@@ -32,5 +32,7 @@ if [ ${MODE} = "test" ]
 	elif [ ${TOPIC} = "sIA_sonars" ]
 		then gnome-terminal --command=" bash -c 'rostopic echo /sIA_sonar_front; $SHELL'"&
 		gnome-terminal --command=" bash -c 'rostopic echo /sIA_sonar_back; $SHELL'"&
+	elif [ ${TOPIC} = "sIA_merge" ]
+		then gnome-terminal --command=" bash -c 'rostopic echo /sIA_merged_laser; $SHELL'"&
 	fi
 fi
