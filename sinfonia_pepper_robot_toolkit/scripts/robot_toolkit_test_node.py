@@ -130,13 +130,20 @@ class RobotToolkitTestNode:
             self._rate.sleep()
     
         # Functionality test
-        pub.publish("sIA_laser_srdf.laser_scan.ON")
-        pub.publish("sIA_laser_srdl.laser_scan.ON")
-	pub.publish("sIA_laser_srdr.laser_scan.ON")
-        #pub.publish("sIA_laser_gl.laser_scan.OFF")
-        #time.sleep(5)
-        #pub.publish("sIA_laser_gr.laser_scan.OFF")
-        #time.sleep(5)
+        pub.publish("sIA_laser_gl.laser_scan.ON")
+        time.sleep(5)
+        pub.publish("sIA_laser_gr.laser_scan.ON")
+        time.sleep(5)
+        pub.publish("sIA_laser_gl.laser_scan.OFF")
+        time.sleep(5)
+        pub.publish("sIA_laser_gr.laser_scan.OFF")
+        time.sleep(5)
+    
+        # Error test
+        pub.publish("sIA_laser_grlaser_scanOFF")
+        time.sleep(1)
+        pub.publish("sIA_laser_gr.laserscan.OFF")
+        time.sleep(1)
     
     def testCamera(self):
         rospy.wait_for_service("sIA_take_picture")
