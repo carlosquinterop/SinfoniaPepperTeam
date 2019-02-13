@@ -93,7 +93,7 @@ class RobotMic(object):
                 channel = data.data.split('.')[-2]
                 state = data.data.split('.')[-1]
             except:
-                self._errorPub.publish("Error 0x01: Wrong message")
+                self._errorPub.publish("Error 0x01: Wrong message in [microphone]")
                 exit(1)
 
             if (channel in ["1", "2", "3", "4"]) and (state in ["ON", "OFF"]):
@@ -103,4 +103,4 @@ class RobotMic(object):
                 elif state == "OFF":
                     self.stopProcessing()
             else:
-                self._errorPub.publish("Error 0x01: Wrong message")
+                self._errorPub.publish("Error 0x01: Wrong message [microphone]")

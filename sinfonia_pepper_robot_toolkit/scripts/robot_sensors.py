@@ -23,6 +23,7 @@
 """
 
 from sensors.robot_lasers import RobotLasers
+from sensors.robot_sonars import RobotSonars
 
 
 class RobotSensors:
@@ -31,8 +32,14 @@ class RobotSensors:
         self._ip = ip
 
         self.robotLaser = None
+        self.robotSonar = None
 
     def initLasers(self):
         self.robotLaser = RobotLasers(ip=self._ip)
         self.robotLaser.createMessages()
         self.robotLaser.createPublishers()
+
+    def initSonars(self):
+        self.robotSonar = RobotSonars(ip=self._ip)
+        self.robotSonar.createMessages()
+        self.robotSonar.createPublishers()

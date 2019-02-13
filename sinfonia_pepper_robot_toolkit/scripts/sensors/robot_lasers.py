@@ -411,17 +411,18 @@ class RobotLasers:
         self.laserRate.sleep()
 
     def callback(self, data):
+
         if "laser" in data.data:
             try:
                 laser = data.data.split('.')[0].split('_')[-1]
                 type = data.data.split('.')[-2]
                 state = data.data.split('.')[-1]
             except:
-                self._errorPub.publish("Error 0x01: Wrong message")
+                self._errorPub.publish("Error 0x01: Wrong message [lasers]")
                 exit(1)
 
             if (laser in self._lasers.keys()) and (type in self._laserTypes.keys()) and (state in self._laserStates.keys()):
                 self.setType(self._laserTypes[type][0], self._laserTypes[type][1])
                 self._lasers[laser] = self._laserStates[state]
             else:
-                self._errorPub.publish("Error 0x01: Wrong message")
+                self._errorPub.publish("Error 0x01: Wrong message [lasers]")
