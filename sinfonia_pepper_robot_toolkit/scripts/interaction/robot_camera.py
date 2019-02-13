@@ -83,7 +83,7 @@ class RobotCamera:
             image = self._bridge.cv2_to_imgmsg(np.array(image, 'uint8'), "rgb8")
             self.videoPublisher.publish(image)
         except TypeError:
-            self._errorPub.publish("Error 0x06: Camera closed beforehand")
+            self._errorPub.publish("Error 0x06: Camera closed beforehand [camera]")
             return
 
     def takeDepthMap(self):
@@ -108,7 +108,7 @@ class RobotCamera:
         if req.command == "Take Picture":
             if self.name is None:
                 if len(req.params) != 4:
-                    self._errorPub.publish("Error 0x02: Wrong number of params")
+                    self._errorPub.publish("Error 0x02: Wrong number of params [camera]")
                 else:
                     params = list(req.params)
                     if utils.checkCameraSettings(params, "camera"):
@@ -120,11 +120,11 @@ class RobotCamera:
                             msg = self.takeDepthMap()
                             return TakePictureResponse(msg)
                     else:
-                        self._errorPub.publish("Error 0x00: Value out of range")
+                        self._errorPub.publish("Error 0x00: Value out of range [camera]")
             else:
-                self._errorPub.publish("Error 0x05: Resource is already in use")
+                self._errorPub.publish("Error 0x05: Resource is already in use [camera]")
         else:
-            self._errorPub.publish("Error 0x01: Wrong message")
+            self._errorPub.publish("Error 0x01: Wrong message [camera]")
 
     def handleStreamVideo(self, data):
 
@@ -150,4 +150,4 @@ class RobotCamera:
                 else:
                     self._errorPub.publish("Error 0x01: Wrong message [camera]")
             else:
-                self._errorPub.publish("Error 0x02: Wrong number of  [camera]")
+                self._errorPub.publish("Error 0x02: Wrong number of params [camera]")

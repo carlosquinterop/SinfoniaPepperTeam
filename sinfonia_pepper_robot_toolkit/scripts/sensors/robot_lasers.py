@@ -173,7 +173,7 @@ class RobotLasers:
         self.memProxy = ALProxy("ALMemory", ip, 9559)
 
         if self.laserProxy is None or self.memProxy is None:
-            self.errorPub.publish("Error 0x02: Could not start either ALLaser or ALMemory Proxy")
+            self._errorPub.publish("Error 0x02: Could not start either ALLaser or ALMemory Proxy [lasers]")
             exit(1)
 
     def fetchLaserValues(self, keyPrefix, scanNum):
@@ -415,14 +415,15 @@ class RobotLasers:
         if "laser" in data.data:
             try:
                 laser = data.data.split('.')[0].split('_')[-1]
-                type = data.data.split('.')[-2]
+                scanType = data.data.split('.')[-2]
                 state = data.data.split('.')[-1]
+
+                if (laser in self._lasers.keys()) and (scanType in self._laserTypes.keys()) and (
+                        state in self._laserStates.keys()):
+                    self.setType(self._laserTypes[scanType][0], self._laserTypes[scanType][1])
+                    self._lasers[laser] = self._laserStates[state]
+                else:
+                    self._errorPub.publish("Error 0x01: Wrong message [lasers]")
             except:
                 self._errorPub.publish("Error 0x01: Wrong message [lasers]")
-                exit(1)
-
-            if (laser in self._lasers.keys()) and (type in self._laserTypes.keys()) and (state in self._laserStates.keys()):
-                self.setType(self._laserTypes[type][0], self._laserTypes[type][1])
-                self._lasers[laser] = self._laserStates[state]
-            else:
-                self._errorPub.publish("Error 0x01: Wrong message [lasers]")
+                return

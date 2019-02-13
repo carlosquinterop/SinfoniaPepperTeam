@@ -247,8 +247,6 @@ class RobotToolkitTestNode:
         time.sleep(1)
         pub.publish("sIA_video_stream.0.1.11.ON")
         time.sleep(1)
-        pub.publish("sIA_videostream.0.1.11.30.ON")
-        time.sleep(1)
         pub.publish("sIA_video_stream.3.1.11.30.ON")
         time.sleep(1)
         pub.publish("sIA_video_stream.0.1.11.30.O")
