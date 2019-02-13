@@ -10,7 +10,7 @@
 	</node>	
 
 	<!-- La informacion de salida de ira_laser_tools va al nodo de Gmapping -->
-	<node pkg="gmapping" type="slam_gmapping" name="slam" output="screen">
+	<node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen">
 		<remap from="scan" to="/sia_merged_lasers" />
 		<param name="linearUpdate" value="0.0" />
 		<param name="angularUpdate" value="0.0" />
