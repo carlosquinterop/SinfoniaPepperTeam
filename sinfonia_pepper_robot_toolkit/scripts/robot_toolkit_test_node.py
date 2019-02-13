@@ -71,6 +71,8 @@ class RobotToolkitTestNode:
             self.testVideo()
         elif self._testTopic == "sIA_depth_camera":
             self.testDepthCamera()
+        elif self._testTopic == "sIA_sonars":
+            self.testSonars()
 
     def testMoveToward(self):
         pub = rospy.Publisher("sIA_move_toward", MoveTowardVector, queue_size=10)
@@ -284,6 +286,23 @@ class RobotToolkitTestNode:
             takePicture("Take Picture", [2, 1, 17, 30])
         except rospy.service.ServiceException:
             pass
+
+    def testSonars(self):
+        pub = rospy.Publisher("sIA_stream_from", String, queue_size=10)
+        while pub.get_num_connections() == 0:
+            self._rate.sleep()
+
+        pub.publish("sIA_sonar_front.ON")
+        pub.publish("sIA_sonar_back.ON")
+        time.sleep(30)
+        pub.publish("sIA_sonar_front.OFF")
+        pub.publish("sIA_sonar_back.OFF")
+
+        # Error test
+        pub.publish("sIA_sonar_font.OFF")
+        pub.publish("sIA_sonar_back.ONN")
+
+
 
 
 if __name__ == '__main__':
