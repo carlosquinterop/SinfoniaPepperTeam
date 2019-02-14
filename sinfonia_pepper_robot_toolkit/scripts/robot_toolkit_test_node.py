@@ -35,7 +35,7 @@ from PIL import Image as im
 from cv_bridge import CvBridge
 from sensor_msgs.msg import Image
 from std_msgs.msg import String, Float64MultiArray
-from sinfonia_pepper_robot_toolkit.srv import TakePicture
+from sinfonia_pepper_robot_toolkit.srv import TakePicture, ReadJoint
 from sinfonia_pepper_robot_toolkit.msg import MoveToVector, MoveTowardVector, Wav, T2S, File
 
 
@@ -75,6 +75,8 @@ class RobotToolkitTestNode:
             self.testSonars()
         elif self._testTopic == "sIA_merge":
             self.testMerge()
+        elif self._testTopic == "sIA_read_joint":
+            self.testReadJoint()
 
     def testMoveToward(self):
         pub = rospy.Publisher("sIA_move_toward", MoveTowardVector, queue_size=10)
@@ -307,9 +309,21 @@ class RobotToolkitTestNode:
         while pub.get_num_connections() == 0:
             self._rate.sleep()
 
-        pub.publish("sIA_laser_merge.laser_scan.ON")
+        pub.publish("sIA_laser_merge.ON")
         time.sleep(30)
-        pub.publish("sIA_laser_merge.laser_scan.OFF")
+        pub.publish("sIA_laser_merge.OFF")
+
+    def testReadJoint(self):
+        rospy.wait_for_service("sIA_read_joint")
+        readJoint = rospy.ServiceProxy("sIA_read_joint", ReadJoint)
+
+        # Functionality test
+        joints = ["Head", "RShoulder", "RElbow", "RWrist", "LShoulder", "LElbow", "LWrist", "Hip", "Knee"]
+
+        for joint in joints:
+            response = readJoint(joint)
+            print(joint + ":\n\tRoll: " + str(response.roll) + "\n\tPitch: " + str(response.pitch) + "\n\tYaw: "
+                  + str(response.yaw) + "\n")
 
 
 if __name__ == '__main__':

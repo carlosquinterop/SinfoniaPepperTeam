@@ -23,46 +23,23 @@
 """
 
 import rospy
-import argparse
-from robot_control import RobotControl
-from robot_interaction import RobotInteraction
+from naoqi import ALProxy
+from std_msgs.msg import String
+from sinfonia_pepper_robot_toolkit.msg import LEDs
 
 
-class RobotToolkitNode:
+class RobotLEDs:
 
     def __init__(self, ip):
-        rospy.init_node('robot_toolkit_node', anonymous=True)
+        self._leds = ALProxy("ALLeds", ip, 9559)
 
-        self._robotControl = RobotControl(ip)
-        self._robotControl.subscribeTopics()
+        self._errorPub = rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
 
-        self._robotInteraction = RobotInteraction(ip)
-        self._robotInteraction.initSpeakers()
-        self._robotInteraction.robotSpeakers.subscribeTopics()
+    def subscribeTopics(self):
+        rospy.Subscriber("sIA_leds", LEDs, self.callback)
 
-        self._robotInteraction.initT2S()
-        self._robotInteraction.robotT2S.subscribeTopics()
-
-        self._robotInteraction.initLEDs()
-        self._robotInteraction.robotLEDs.subscribeTopics()
-
-    def robotToolkitNode(self):
-        rospy.spin()
-
-
-if __name__ == '__main__':
-
-    try:
-        parser = argparse.ArgumentParser()
-        parser.add_argument("--pepper_ip", type=str, default="127.0.0.1",
-                            help="Robot IP address. On robot or Local Naoqi: use '127.0.0.1'.")
-        parser.add_argument("__name", type=str, default="",
-                            help="Name of the node")
-        parser.add_argument("__log", type=str, default="",
-                            help="Auto generated log file path.")
-        args = parser.parse_args()
-
-        node = RobotToolkitNode(args.pepper_ip)
-        node.robotToolkitNode()
-    except rospy.ROSInterruptException:
-        pass
+    def callback(self, data):
+        if "Ear" in data.name:
+            self._leds.fadeRGB(data.name, 0, 0, data.b / 255, data.t)
+        else:
+            self._leds.fadeRGB(data.name, float(data.r) / 255.0, float(data.g) / 255.0, float(data.b) / 255.0, data.t)

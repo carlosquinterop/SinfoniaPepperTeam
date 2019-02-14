@@ -26,6 +26,7 @@ from interaction.robot_t2s import RobotT2S
 from interaction.robot_mic import RobotMic
 from interaction.robot_camera import RobotCamera
 from interaction.robot_speakers import RobotSpeakers
+from interaction.robot_leds import RobotLEDs
 
 
 class RobotInteraction:
@@ -37,6 +38,7 @@ class RobotInteraction:
         self.robotMic = None
         self.robotSpeakers = None
         self.robotT2S = None
+        self.robotLEDs = None
 
     def initCamera(self):
         self.robotCamera = RobotCamera(ip=self._ip)
@@ -50,3 +52,6 @@ class RobotInteraction:
 
     def initT2S(self):
         self.robotT2S = RobotT2S(ip=self._ip)
+
+    def initLEDs(self):
+        self.robotLEDs = RobotLEDs(ip=self._ip)
