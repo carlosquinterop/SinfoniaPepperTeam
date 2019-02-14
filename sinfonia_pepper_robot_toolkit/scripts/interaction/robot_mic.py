@@ -95,29 +95,29 @@ class RobotMic(object):
             try:
                 channel = data.data.split('.')[-2]
                 state = data.data.split('.')[-1]
+
+                if (channel in ["1", "2", "3", "4"]) and (state in ["ON", "OFF"]):
+                    if state == "ON":
+                        msg = LEDs()
+                        msg.name = "FaceLeds"
+                        msg.r = 135
+                        msg.g = 188
+                        msg.b = 255
+                        msg.t = 0
+                        self._lPub.publish(msg)
+                        self.startProcessing(channel)
+                        self.micFlag = True
+                    elif state == "OFF":
+                        msg = LEDs()
+                        msg.name = "FaceLeds"
+                        msg.r = 255
+                        msg.g = 255
+                        msg.b = 255
+                        msg.t = 0
+                        self._lPub.publish(msg)
+                        self.stopProcessing()
+                else:
+                    self._errorPub.publish("Error 0x01: Wrong message [microphone]")
             except:
                 self._errorPub.publish("Error 0x01: Wrong message [microphone]")
-                exit(1)
-
-            if (channel in ["1", "2", "3", "4"]) and (state in ["ON", "OFF"]):
-                if state == "ON":
-                    msg = LEDs()
-                    msg.name = "FaceLeds"
-                    msg.r = 135
-                    msg.g = 188
-                    msg.b = 255
-                    msg.t = 0
-                    self._lPub.publish(msg)
-                    self.startProcessing(channel)
-                    self.micFlag = True
-                elif state == "OFF":
-                    msg = LEDs()
-                    msg.name = "FaceLeds"
-                    msg.r = 255
-                    msg.g = 255
-                    msg.b = 255
-                    msg.t = 0
-                    self._lPub.publish(msg)
-                    self.stopProcessing()
-            else:
-                self._errorPub.publish("Error 0x01: Wrong message [microphone]")
+                return
