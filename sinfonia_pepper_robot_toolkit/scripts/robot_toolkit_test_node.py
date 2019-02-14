@@ -307,9 +307,9 @@ class RobotToolkitTestNode:
         while pub.get_num_connections() == 0:
             self._rate.sleep()
 
-        pub.publish("sIA_laser_merge.laser_scan.ON")
+        pub.publish("sIA_laser_merge.ON")
         time.sleep(30)
-        pub.publish("sIA_laser_merge.laser_scan.OFF")
+        pub.publish("sIA_laser_merge.OFF")
 
 
 if __name__ == '__main__':
