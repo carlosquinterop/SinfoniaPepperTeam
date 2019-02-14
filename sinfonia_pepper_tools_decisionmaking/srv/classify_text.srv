@@ -1,0 +1,6 @@
+string text
+---
+bool affirmation
+bool negation
+string clientName
+string[] clientOrder
