@@ -1,19 +1,67 @@
 <launch>
 	
+	<arg name="eta" value="1.0"/>
+	<arg name="Geta" value="15.0"/>
+
 	<!-- El ira_laser_tools es el encargado de unir los laseres -->
 	<!-- Con otro topico se controla si los topicos de entrada estan activos o no -->
 	<node pkg="ira_laser_tools" name="laserscan_multi_merger" type="laserscan_multi_merger" output="screen">
-		<param name="destination_frame" value="odom" />
+		<param name="destination_frame" value="/base_link" />
 		<param name="cloud_destination_topic" value="/merged_cloud" />
-		<param name="scan_destination_topic" value="/sia_merged_lasers" />
+		<param name="scan_destination_topic" value="/sIA_merged_laser" />
 		<param name="laserscan_topics" value="/sIA_laser_srdf/laser_scan /sIA_laser_srdl/laser_scan /sIA_laser_srdr/laser_scan" />
 	</node>	
 
 	<!-- La informacion de salida de ira_laser_tools va al nodo de Gmapping -->
 	<node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen">
-		<remap from="scan" to="/sia_merged_lasers" />
-		<param name="linearUpdate" value="0.0" />
-		<param name="angularUpdate" value="0.0" />
+		<remap from="scan" to="/sIA_merged_laser" />
+		<param name="map_update_interval" value="1.0"/>
+		<param name="linearUpdate" value="1.0" />
+		<param name="angularUpdate" value="0.5" />
 	</node>
 
+	<node pkg="rrt_exploration" type="global_rrt_detector" name="global_detector" output="screen">
+  		<param name="eta" value="$(arg Geta)"/>
+  		<param name="map_topic" value="/map"/>
+  	</node>
+  
+  	<node pkg="rrt_exploration" type="local_rrt_detector" name="local_detector" output="screen">
+  		<param name="eta" value="$(arg eta)"/>
+  		<param name="map_topic" value="/map"/>
+  		<param name="robot_frame" value="odom"/>
+  	</node>
+  
+  	<node pkg="rrt_exploration" type="filter.py" name="filter" output="screen">
+  		<param name="map_topic" value="/map"/>
+  		<param name="info_radius" value="1"/> 
+  		<param name="costmap_clearing_threshold" value="70"/> 
+  		<param name="goals_topic" value="/detected_points"/>
+  		<param name="namespace_init_count" value="1"/>
+  		<param name="namespace" value="/robot_"/> 
+  		<param name="n_robots" value="1"/>
+  		<param name="rate" value="100"/>
+  	</node>
+  
+  	<node pkg="rrt_exploration" type="assigner.py" name="assigner" output="screen">
+  		<param name="map_topic" value="/map"/>
+  		<param name="global_frame" value="/map"/>
+  		<param name="info_radius" value="1"/> 
+  		<param name="info_multiplier" value="3.0"/> 
+  		<param name="hysteresis_radius" value="3.0"/> 
+  		<param name="hysteresis_gain" value="2.0"/> 
+  		<param name="frontiers_topic" value="/filtered_points"/> 
+  		<param name="n_robots" value="1"/>
+  		<param name="namespace_init_count" value="1"/>
+  		<param name="namespace" value="/robot_"/>
+  		<param name="delay_after_assignement" value="0.5"/>
+  		<param name="rate" value="100"/>
+  	</node>
 </launch>
+
+<!--Terminal1: ./robot_toolkit 172.20.10.2-->
+
+<!--Terminal2: rostopic pub /sIA_stream_from std_msgs/String "sIA_laser_srdf.laser_scan.ON"-->
+<!--Terminal3: rostopic pub /sIA_stream_from std_msgs/String "sIA_laser_srdl.laser_scan.ON"-->
+<!--Terminal4: rostopic pub /sIA_stream_from std_msgs/String "sIA_laser_srdr.laser_scan.ON"-->
+
+<!--Terminal5: roslaunch sinfonia_pepper_tools_navigation sIA_NavigationTools.launch-->
