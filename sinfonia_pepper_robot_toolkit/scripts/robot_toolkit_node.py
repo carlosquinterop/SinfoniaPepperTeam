@@ -43,6 +43,9 @@ class RobotToolkitNode:
         self._robotInteraction.initT2S()
         self._robotInteraction.robotT2S.subscribeTopics()
 
+        self._robotInteraction.initLEDs()
+        self._robotInteraction.robotLEDs.subscribeTopics()
+
     def robotToolkitNode(self):
         rospy.spin()
 

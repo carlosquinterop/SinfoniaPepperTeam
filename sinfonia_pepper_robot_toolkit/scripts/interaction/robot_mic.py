@@ -26,6 +26,7 @@ import time
 import utils
 import rospy
 from std_msgs.msg import Float64MultiArray, String
+from sinfonia_pepper_robot_toolkit.msg import LEDs
 
 
 class RobotMic(object):
@@ -44,6 +45,8 @@ class RobotMic(object):
 
         self._pub = rospy.Publisher("sIA_mic_raw", Float64MultiArray, queue_size=1)
         self._errorPub = rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
+
+        self._lPub = rospy.Publisher("sIA_leds", LEDs, queue_size=10)
 
     def subscribeTopics(self):
         rospy.Subscriber("sIA_stream_from", String, self.callback)
@@ -98,9 +101,23 @@ class RobotMic(object):
 
             if (channel in ["1", "2", "3", "4"]) and (state in ["ON", "OFF"]):
                 if state == "ON":
+                    msg = LEDs()
+                    msg.name = "FaceLeds"
+                    msg.r = 135
+                    msg.g = 188
+                    msg.b = 255
+                    msg.t = 0
+                    self._lPub.publish(msg)
                     self.startProcessing(channel)
                     self.micFlag = True
                 elif state == "OFF":
+                    msg = LEDs()
+                    msg.name = "FaceLeds"
+                    msg.r = 255
+                    msg.g = 255
+                    msg.b = 255
+                    msg.t = 0
+                    self._lPub.publish(msg)
                     self.stopProcessing()
             else:
                 self._errorPub.publish("Error 0x01: Wrong message [microphone]")

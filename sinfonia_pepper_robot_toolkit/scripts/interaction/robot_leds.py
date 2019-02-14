@@ -22,8 +22,24 @@
 //======================================================================//
 """
 
+import rospy
+from naoqi import ALProxy
+from std_msgs.msg import String
+from sinfonia_pepper_robot_toolkit.msg import LEDs
 
-class RobotT2S:
+
+class RobotLEDs:
 
     def __init__(self, ip):
-        pass
+        self._leds = ALProxy("ALLeds", ip, 9559)
+
+        self._errorPub = rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
+
+    def subscribeTopics(self):
+        rospy.Subscriber("sIA_leds", LEDs, self.callback)
+
+    def callback(self, data):
+        if "Ear" in data.name:
+            self._leds.fadeRGB(data.name, 0, 0, data.b / 255, data.t)
+        else:
+            self._leds.fadeRGB(data.name, float(data.r) / 255.0, float(data.g) / 255.0, float(data.b) / 255.0, data.t)
