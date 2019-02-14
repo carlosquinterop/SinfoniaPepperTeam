@@ -50,7 +50,7 @@ class RobotSpeakers:
         if data.extension == "wav":
             path = os.path.dirname(os.path.abspath(__file__)) + "/../.temp/temp." + data.extension
         else:
-            self._errorPub.publish("Error 0x03: Unsupported data format")
+            self._errorPub.publish("Error 0x03: Unsupported data format [speakers]")
             exit(1)
 
         with open(path, "wb") as f:

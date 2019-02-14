@@ -55,7 +55,7 @@ class RobotMic(object):
             self._mic.setClientPreferences(self._moduleName, 16000, channel, 0)
             self._mic.subscribe(self._moduleName)
         else:
-            self._errorPub.publish("Error 0x00: Value out of range")
+            self._errorPub.publish("Error 0x00: Value out of range [microphone]")
 
     def stopProcessing(self):
         self._mic.unsubscribe(self._moduleName)
@@ -93,7 +93,7 @@ class RobotMic(object):
                 channel = data.data.split('.')[-2]
                 state = data.data.split('.')[-1]
             except:
-                self._errorPub.publish("Error 0x01: Wrong message")
+                self._errorPub.publish("Error 0x01: Wrong message [microphone]")
                 exit(1)
 
             if (channel in ["1", "2", "3", "4"]) and (state in ["ON", "OFF"]):
@@ -103,4 +103,4 @@ class RobotMic(object):
                 elif state == "OFF":
                     self.stopProcessing()
             else:
-                self._errorPub.publish("Error 0x01: Wrong message")
+                self._errorPub.publish("Error 0x01: Wrong message [microphone]")

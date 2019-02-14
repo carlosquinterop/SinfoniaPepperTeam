@@ -40,6 +40,9 @@ class RobotToolkitStreamNode:
         self._robotSensors.initLasers()
         self._robotSensors.robotLaser.subscribeTopics()
 
+        self._robotSensors.initSonars()
+        self._robotSensors.robotSonar.subscribeTopics()
+
         self._robotInteraction = RobotInteraction(ip)
 
         self._robotInteraction.initCamera()
@@ -54,6 +57,8 @@ class RobotToolkitStreamNode:
         while not rospy.is_shutdown():
             if self._robotSensors.robotLaser.checkOn():
                 self._robotSensors.robotLaser.getLaserData()
+            if self._robotSensors.robotSonar.checkOn():
+                self._robotSensors.robotSonar.getSonarData()
             if self._robotInteraction.robotMic.micFlag:
                 self._robotInteraction.robotMic.do_nothing()
             if self._robotInteraction.robotCamera.isStreaming:

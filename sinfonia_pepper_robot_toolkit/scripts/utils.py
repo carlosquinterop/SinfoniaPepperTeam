@@ -49,10 +49,17 @@ def fillVector(values, dataType):
     return msg
 
 
-def checkCameraSettings(params):
-    if areInRange([params[1]], [[0, 2]]):
-        criteria = [[0, 1], [0, 4], [0, 16], [1, 30]]
-    elif areInRange([params[1]], [[3, 4]]):
-        criteria = [[0, 1], [0, 4], [0, 16], [1, 1]]
+def checkCameraSettings(params, mode):
+    if params[0] == 2:
+        if mode == "camera":
+            return (params[1] in [0, 1, 7, 8]) and (params[2] == 17, 21, 23) and (params[3] in [1, 20])
+        else:
+            return False
+    else:
+        criteria = False
 
-    return areInRange(params, criteria)
+        if areInRange([params[1]], [[0, 2]]):
+            criteria = [[0, 1], [0, 4], [0, 16], [1, 30]]
+        elif areInRange([params[1]], [[3, 4]]):
+            criteria = [[0, 1], [0, 4], [0, 16], [1, 15]]
+        return areInRange(params, criteria)
