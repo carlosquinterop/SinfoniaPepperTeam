@@ -11,8 +11,8 @@ import os
 import time
 import tf
 import sys
-
-class Deliver_order():
+a = 0
+class GiveOrder():
 
 
     def __init__(self):
@@ -20,7 +20,7 @@ class Deliver_order():
         self.confAns = []
         self.confResp = []
         self.person_ok = False
-        self.a = 0
+        # self.a = 0
         self.order = None
 
     def talkListen(self, askname):
@@ -118,10 +118,11 @@ class Deliver_order():
         ans = self.talkListen("Entendí que quieres" + self.confResp[3][0] + "¿Es correcto?")
         self.confAns = self.analyzeName(ans + ".")
 
-    def callback(self, data):
-        photo = data.data
-        print("hola hola hola",photo,self.a)
-        while photo == "True" and self.a > 80:
+    def start(self, data):
+        global a
+        photo = data
+        print("photo",photo,a)
+        while photo == "True" and a > 80:
             while True:
                 self.Give_order("Bryan")
                 if not self.order.order_state:
@@ -134,28 +135,13 @@ class Deliver_order():
                             self.confResp[3] = []
                     self.updateOrder("Bryan",self.orderGlobal)
                     photo = "False"
-                    self.a = 0
+                    a = 0
                     pass
                 else:
                     self.talk("Tú pedido esta listo, puedes recogerlo en la barra")
                     break
                 break
             break
-            self.a = 0
-            print("asdfhjklñññññññ",photo,self.a)
-        self.a = self.a + 1
-        print("HELOSUI")
-
-    def sIAGiveOrdercalback(self):
-        rospy.init_node('sIA_deliver_order')
-        self.talk("Inicio Nodo Give Order")
-        rospy.Subscriber("person_detection", String, self.callback)
-        rospy.spin()
-
-
-if __name__ == "__main__":
-    try:
-        dr = Deliver_order()
-        dr.sIAGiveOrdercalback()
-    except rospy.ROSInterruptException:
-        pass
+            a = 0
+            # print("asdfhjklñññññññ",photo,a)
+        a = a + 1

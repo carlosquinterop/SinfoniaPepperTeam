@@ -151,26 +151,24 @@ class MakeOrder():
         ansOpt = self.talkListen('¿Es correcto?')
         respAnsOpt = self.analyzeTxt(ansOpt)
 
-
-if __name__ == "__main__":
-    mk = MakeOrder()
-    mk.Give_order_bar("x")
-    mk.talkWait()
-    while True:
-        Aff = mk.talkListen("Esperaré a que esté listo")
-        confAff = mk.analyzeTxt(Aff + ".")
-        if confAff[0]:
-            break
-    while True:
-        print(mk.detectObjects("x"))
-        mk.Make_order(mk.vec_orders1)
-        if mk.confMissing():
-            break
-    while True:
-        mk.asking4Options()
-        if respAnsOpt[0]:
-            print(True)
-            mk.Additionals_order(mk.confOrderOpt[3])
-            break
-        else:
-            print(False)
+    def start(self):
+        self.Give_order_bar("x")
+        self.talkWait()
+        while True:
+            Aff = self.talkListen("Esperaré a que esté listo")
+            confAff = self.analyzeTxt(Aff + ".")
+            if confAff[0]:
+                break
+        while True:
+            print(self.detectObjects("x"))
+            self.Make_order(self.vec_orders1)
+            if self.confMissing():
+                break
+        while True:
+            self.asking4Options()
+            if respAnsOpt[0]:
+                print(True)
+                self.Additionals_order(self.confOrderOpt[3])
+                break
+            else:
+                print(False)

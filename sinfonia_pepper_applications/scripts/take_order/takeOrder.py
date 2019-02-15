@@ -22,6 +22,35 @@ class TakeOrder():
         self.orderGlobal = ""
         self.features_person = []
         self.personID = ""
+        print('jajaaj')
+
+    def start(self):
+        while True:
+            if True:
+                while True:
+                    self.pedirNombre()
+                    print(self.confAns)
+                    if self.confAns[0] == True:
+                        self.nameGlobal = self.confName[2]
+                        #tk.memorize_face(tk.nameGlobal, False)
+                        #print(tk.features_person,tk.personID)
+                        break
+                while True:
+                    self.pedirPedido()
+                    if self.confAns[0] == True:
+                        self.orderGlobal = self.confOrder[3][0]
+                        break
+                    else:
+                        self.confName[3] = []
+                self.addNewClient(tk.nameGlobal, self.orderGlobal, self.personID, self.features_person)
+                self.otroCliente()
+                print(self.confClient[1])
+                if self.confClient[1] == True:
+                    break
+        str_order = "x"
+        print(self.Give_order_bar(str_order))
+        # print("nombre",self.nameGlobal)
+        # print("orden",self.orderGlobal)
 
     def talkListen(self, askname):
         rospy.wait_for_service('srvListen')
@@ -140,33 +169,3 @@ class TakeOrder():
             self.personID = azure_id.self.personID
         except rospy.ServiceException:
             print ("Error!! Make sure robot_face node is running ")
-
-
-if __name__ == "__main__":
-    tk = TakeOrder()
-    while True:
-        if True:
-            while True:
-                tk.pedirNombre()
-                print(tk.confAns)
-                if tk.confAns[0] == True:
-                    tk.nameGlobal = tk.confName[2]
-                    #tk.memorize_face(tk.nameGlobal, False)
-                    #print(tk.features_person,tk.personID)
-                    break
-            while True:
-                tk.pedirPedido()
-                if tk.confAns[0] == True:
-                    tk.orderGlobal = tk.confOrder[3][0]
-                    break
-                else:
-                    tk.confName[3] = []
-            tk.addNewClient(tk.nameGlobal, tk.orderGlobal, tk.personID, tk.features_person)
-            tk.otroCliente()
-            print(tk.confClient[1])
-            if tk.confClient[1] == True:
-                break
-    str_order = "x"
-    print(tk.Give_order_bar(str_order))
-    # print("nombre",self.nameGlobal)
-    # print("orden",self.orderGlobal)

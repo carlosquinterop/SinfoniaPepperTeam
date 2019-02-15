@@ -1,8 +1,0 @@
-<launch>
-
-  <node name="sIA_s2t_t2s" pkg="sinfonia_pepper_tools_interaction" type="s2t_t2s.py" ></node>
-  <node name="sIA_objetct_detection" pkg="sinfonia_pepper_tools_interaction" type="object_detection.py"></node>
-  <node name="sIA_classify_text" pkg="sinfonia_pepper_tools_decisionmaking" type="classify_text.py"></node>
-  <node name="sIA_order_management" pkg="sinfonia_pepper_tools_decisionmaking" type="order_management.py"></node>
-
-</launch>
