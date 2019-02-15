@@ -49,11 +49,14 @@ class RobotControl:
                         "Hip": ["HipRoll", "HipPitch"],
                         "Knee": ["KneePitch"]
                         }
+        self._motion.setOrthogonalSecurityDistance(0.0)
+        self._motion.setTangentialSecurityDistance(0.0)
 
     def subscribeTopics(self):
         rospy.Subscriber("sIA_move_toward", MoveTowardVector, self.moveTowardCallback)
         rospy.Subscriber("sIA_stop_move", String, self.stopMoveCallback)
         rospy.Subscriber("sIA_move_to", MoveToVector, self.moveToCallback)
+        rospy.Subscriber("sIA_set_posture", String, self.setPostureCallback)
 
     def moveTowardCallback(self, data):
         values = [data.vx, data.vy, data.omega]
@@ -101,3 +104,8 @@ class RobotControl:
             return ReadJointResponse(roll, pitch, yaw)
         else:
             self._errorPub.publish("Error 0x01: Wrong message [control]")
+
+    def setPostureCallback(self, data):
+        posture = data.data
+
+        self._posture.goToPosture(posture, 1.0)
