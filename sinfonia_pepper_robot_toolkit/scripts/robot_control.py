@@ -49,6 +49,8 @@ class RobotControl:
                         "Hip": ["HipRoll", "HipPitch"],
                         "Knee": ["KneePitch"]
                         }
+        self._motion.setOrthogonalSecurityDistance(0.0)
+        self._motion.setTangentialSecurityDistance(0.0)
 
     def subscribeTopics(self):
         rospy.Subscriber("sIA_move_toward", MoveTowardVector, self.moveTowardCallback)
