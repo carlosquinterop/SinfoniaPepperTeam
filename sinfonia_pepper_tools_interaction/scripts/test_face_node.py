@@ -7,6 +7,7 @@ from sinfonia_pepper_tools_interaction.srv import FaceMemorize
 from sinfonia_pepper_tools_interaction.srv import FaceRecognize
 from rospy_message_converter import message_converter
 from std_msgs.msg import String
+import ast
 
     
 class TestFaceID():
@@ -27,10 +28,13 @@ class TestFaceID():
             try:
                 recognize_face_request = rospy.ServiceProxy('robot_face_recognize',FaceRecognize)
                 person = recognize_face_request(cvWind)
-                print('RESPONSE', person)
+                #print('RESPONSE', person)
                 attributes = message_converter.convert_ros_message_to_dictionary(person)
-                print('RESPONSE', attributes)
-                print('RESPONSE', type(attributes))
+                attributes_dict = ast.literal_eval(attributes['features'])
+                if attributes_dict:
+                    print('RESPONSE', attributes_dict['name'])
+                else:
+                    print('No hay cara')
             except rospy.ServiceException:
                 print ("Error!! Make sure robot_face node is running ")    
             
@@ -54,7 +58,7 @@ if __name__ == '__main__':
                 options = ['\n',1,2,3]
                 if(options.index(int(option))):
                     choise = raw_input('you want the captures to be displayed? (S/n) ')                        
-
+    
                     if(choise==('s' or 'yes' or 'si' or 'S')):
                         cvWindow = True
                     else:
@@ -65,7 +69,7 @@ if __name__ == '__main__':
                     elif(option==2):
                         print('-Recognize service:')
                         test.recognize_face(cvWindow)
-
+    
                     else:
                         print('-Memorize service:')
                         name  = raw_input('Ingrese el nombre de la persona que desea registrar:\n ')

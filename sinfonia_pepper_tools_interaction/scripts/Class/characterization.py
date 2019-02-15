@@ -1,5 +1,3 @@
-#!/usr/bin/env python2
-# -*- coding: utf-8 -*-
 #!/usr/bin/env python
 # license removed for brevity
 
@@ -24,22 +22,17 @@
 //======================================================================//
 """
 
-import cv2 as cv2
-try:
-    from person import Person
-    from person import Less_Blurred
-    from edit_files import Group
-except:
-    from Class.person import Person
-    from Class.person import Less_Blurred
-    from Class.edit_files import Group
+from person import Person
+from person import Less_Blurred
+from edit_files import Group
+
 
 #import unicodedata
 
 class Characterization:
-    def __init__(self):
+    def __init__(self, n_images_to_train):
         self.persons = Person()
-        self.blurry = Less_Blurred()
+        self.blurry = Less_Blurred(n_images_to_train)
 
     def get_persons(self):
         personsList = self.persons.persons_in_group()
