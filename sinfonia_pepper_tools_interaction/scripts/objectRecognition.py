@@ -57,7 +57,7 @@ class ObjectRecognition():
 		self.objects = []
         #"Toma una foto y la guarda en un archivo .jpg"
 		if source == 1:
-			for i in range(70):
+			for i in range(1):
 				self.cap.read()
 			ret, frame = self.cap.read()
 			cv2.imwrite( img_file_path , frame )
