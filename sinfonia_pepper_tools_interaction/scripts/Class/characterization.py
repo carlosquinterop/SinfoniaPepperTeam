@@ -25,10 +25,14 @@
 """
 
 import cv2 as cv2
-from person import Person
-from person import Less_Blurred
-from edit_files import Group
-
+try:
+    from person import Person
+    from person import Less_Blurred
+    from edit_files import Group
+except:
+    from Class.person import Person
+    from Class.person import Less_Blurred
+    from Class.edit_files import Group
 
 #import unicodedata
 
