@@ -6,7 +6,7 @@ import requests
 import os
 import sys
 import json
-from Class.utils import Utils
+from utils import Utils
 
 
 class Azure:
@@ -94,8 +94,7 @@ class Azure:
         self.codeError = -1
         responseDetection = self.detect(imageBytes)
         if self.verify_detection(responseDetection):
-            # self.attributes = self.extract_attributes(responseDetection)
-
+            self.attributes = self.extract_attributes(responseDetection[0])
             targetFace = self.get_face_rectangle(responseDetection[0])
             imgObject = Img(imageBytes)
             if person_id:
@@ -170,6 +169,7 @@ class Azure:
     def identify(self, imageBytes, threshold=None):
         self.codeError = -1
         responseDetection = self.detect(imageBytes)
+        attributes = []
         if len(responseDetection)>0:
             attributes = responseDetection[0]
             attributes["name"] = "desconocido"

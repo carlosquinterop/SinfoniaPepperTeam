@@ -38,7 +38,7 @@ from sensor_msgs.msg import Image
 class FaceID():
     def __init__(self):
         self.ROOT_PATH = os.path.dirname(sys.modules['__main__'].__file__)
-        n_imas, percent, n_train = self.get_parameters(self.ROOT_PATH)
+        n_imas, percent, n_train = self.get_parameters(self.ROOT_PATH) 
         self.n_images_to_take = n_imas
         self.percent_of_face = percent
         self.n_images_to_train = n_train
@@ -52,12 +52,12 @@ class FaceID():
         with open(ROOT_PATH+"/interaction_parameters.json") as f:
             secretInfo = json.load(f)
             return secretInfo["n_images_to_take"], secretInfo["percent_of_face"], secretInfo["n_images_to_train"]
-
+        
     def detectFace(self, req):
         frame = self.take_picture_source()
         people = self.person.detect_person(frame)
         res = self.add_features_to_image(frame,people)
-        if req.cvWindow:
+        if req.cvWindow:    
             self.imagePub.publish(self.bridge.cv2_to_imgmsg(res["frame"], "bgr8"))
         return res["isInFront"]
 
@@ -68,7 +68,7 @@ class FaceID():
             res = self.add_features_to_image(frame,[people])
             self.imagePub.publish(self.bridge.cv2_to_imgmsg(res['frame'], "bgr8"))
         return str(people)
-
+    
     def memorizeFace(self, req):
         images = {}
         for i in range(self.n_images_to_take):
@@ -87,12 +87,12 @@ class FaceID():
             self.imagePub.publish(self.bridge.cv2_to_imgmsg(person.image, "bgr8"))
         features = str(person.hairColor +","+ str(person.glasses) +","+ person.gender + "," + str(person.age))
         return personId, features
-
+      
     def take_picture_source(self):
         source = self.source
         if source == 1:
             cap = cv2.VideoCapture(0)
-            ret, frame = cap.read()
+            ret, frame = cap.read()           
             frame = cv2.GaussianBlur(frame, (5, 5), 0)
             cap.release()
         elif source == 2:
@@ -111,7 +111,7 @@ class FaceID():
         isInFront = False
         if people:
             props = self.utils.setProps(people)
-            for prop in props:
+            for prop in props: 
                 cv2.rectangle(frame, prop['pi'], prop['pf'], (0, 255, 0), 3)
                 font = cv2.FONT_HERSHEY_SIMPLEX
                 proportion = round(prop['prop']*100/float(frame_size),4)
@@ -122,7 +122,7 @@ class FaceID():
                 cv2.putText(frame, str(percent[0])+'%', prop['pi'], font, 1, (255, 150, 0), 2, cv2.LINE_AA)
             if max(percent) > self.percent_of_face:
                 isInFront = True
-                cv2.rectangle(frame, props[0]['pi'], props[0]['pf'], (0, 0, 255), 5) #Remarca la cara mayor
+                cv2.rectangle(frame, props[0]['pi'], props[0]['pf'], (0, 0, 255), 5) #Remarca la cara mayor                
         response = {"frame":frame, "isInFront":isInFront}
         return response
 
