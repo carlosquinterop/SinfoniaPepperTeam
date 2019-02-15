@@ -18,8 +18,8 @@ cameraObjects = []
 
 def ObjectRec():
 	global txt_line
-	objectRecognition.takePhoto(1)
-	print("take photo")
+	# objectRecognition.takePhoto(1)
+	# print("take photo")
 	objectRecognition.processPhoto()
 	print("process photo")
 	objectRecognition.speakObjects()

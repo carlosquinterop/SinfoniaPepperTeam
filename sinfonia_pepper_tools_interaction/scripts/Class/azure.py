@@ -6,7 +6,7 @@ import requests
 import os
 import sys
 import json
-from utils import Utils
+from Class.utils import Utils
 
 
 class Azure:

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # license removed for brevity
 """
 //======================================================================//
@@ -23,7 +23,10 @@
 import pprint
 import rospy
 import sys
+sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages')
 import cv2 as cv2
+sys.path.append("/opt/ros/kinetic/lib/python2.7/dist-packages")
+sys.path.append("/home/roboticacuda/pepper_sinfonia_ws/devel/lib/python2.7/dist-packages")
 import os
 from Class.characterization import Characterization
 from Class.utils import Utils
@@ -61,7 +64,7 @@ class FaceID():
         features = str(people)
         print(features)
         return features
-    
+
     def memorizeFace(self, req):
         images = {}
         for i in range(20):
@@ -74,12 +77,12 @@ class FaceID():
             self.imagePub.publish(self.bridge.cv2_to_imgmsg(image, "bgr8"))
         features = str(person.hairColor +","+ str(person.glasses) +","+ person.gender + "," + str(person.age))
         return personId, features
-      
+
     def take_picture_source(self):
         source = self.source
         if source == 1:
             cap = cv2.VideoCapture(0)
-            ret, frame = cap.read()           
+            ret, frame = cap.read()
             frame = cv2.GaussianBlur(frame, (5, 5), 0)
             cap.release()
         elif source == 2:
@@ -95,7 +98,7 @@ class FaceID():
     def add_features_to_image(self,frame, people):
         frame_size = frame.shape[0]*frame.shape[1]
         props = self.utils.setProps(people)
-        for prop in props: 
+        for prop in props:
             cv2.rectangle(frame, prop['pi'], prop['pf'], (0, 255, 0), 3)
             font = cv2.FONT_HERSHEY_SIMPLEX
             if 'name' in people[0]:

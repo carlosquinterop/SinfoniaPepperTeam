@@ -21,13 +21,12 @@
 //                                                                      //
 //======================================================================//
 """
-from azure import Azure
 import cv2
 import os, sys
-import Queue as qe
-from edit_files import Group
-from edit_files import PersonFiles
-
+import queue as qe
+from Class.azure import Azure
+from Class.edit_files import Group
+from Class.edit_files import PersonFiles
 class Person:
 
     def __init__(self):
@@ -104,7 +103,7 @@ class Person:
                 for key, value in self.azureService.attributes.items():
                     setattr(self, key, value)
                 self.image = frame
-                self.G.add(PersonFiles(id, person_id, self.hairColor, self.glasses, 
+                self.G.add(PersonFiles(id, person_id, self.hairColor, self.glasses,
                                        self.gender, self.age))
             self.azureService.train()
         return person_id
@@ -116,7 +115,7 @@ class Person:
         identify,error = self.azureService.identify(imgBytes)
         # print('IDENTIFY VERIFICATION: ', identify)
         return identify
-        
+
     def identifyPerson(self, frame):
         personsList = self.persons_in_group()
         people = self.identify(frame)
@@ -128,7 +127,7 @@ class Person:
             else:
                 people['name'] = 'Desconocido'
         return people
-      
+
 
     def detectPerson(self, frame):
         self.frame = frame
@@ -137,7 +136,7 @@ class Person:
         return people
 
 
-            
+
     def delete_person_by_name(self,name):
         deleted = False
         personsList, self.codeError = self.azureService.get_all_names()
@@ -150,7 +149,7 @@ class Person:
                 break
         if not deleted:
             print('Person: {} Not Found !!'.format(name))
-        
+
     def persons_in_group(self):
         personsList, self.codeError = self.azureService.get_all_names()
         return personsList
@@ -174,7 +173,7 @@ class Person:
                         setattr(self, attr, ([], None))
                     else:
                         setattr(self, attr, None)
-                        
+
 class Less_Blurred:
     def __init__(self):
         self.nImages = 1
@@ -192,4 +191,3 @@ class Less_Blurred:
                 self.frames.append(images[nIma])
         else:
             print('review images type')
-
