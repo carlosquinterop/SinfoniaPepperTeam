@@ -26,16 +26,29 @@ import utils
 import rospy
 from naoqi import ALProxy
 from std_msgs.msg import String
+from sinfonia_pepper_robot_toolkit.srv import ReadJoint, ReadJointResponse
 from sinfonia_pepper_robot_toolkit.msg import MoveToVector, MoveTowardVector
 
 
 class RobotControl:
 
     def __init__(self, ip):
-        self._traction = ALProxy("ALMotion", ip, 9559)
-        self._traction.moveInit()
+        self._motion = ALProxy("ALMotion", ip, 9559)
+        self._motion.moveInit()
 
+        rospy.Service("sIA_read_joint", ReadJoint, self.handleReadJoint)
         self._errorPub = rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
+
+        self._joints = {"Head": ["HeadPitch", "HeadYaw"],
+                        "RShoulder": ["RShoulderRoll", "RShoulderPitch"],
+                        "RElbow": ["RElbowRoll", "RElbowYaw"],
+                        "RWrist": ["RWristYaw"],
+                        "LShoulder": ["LShoulderRoll", "LShoulderPitch"],
+                        "LElbow": ["LElbowRoll", "LElbowYaw"],
+                        "LWrist": ["LWristYaw"],
+                        "Hip": ["HipRoll", "HipPitch"],
+                        "Knee": ["KneePitch"]
+                        }
 
     def subscribeTopics(self):
         rospy.Subscriber("sIA_move_toward", MoveTowardVector, self.moveTowardCallback)
@@ -48,16 +61,16 @@ class RobotControl:
 
         if utils.areInRange(values, criteria):
             [vx, vy, omega] = values
-            self._traction.post.moveToward(vx, vy, omega)
+            self._motion.post.moveToward(vx, vy, omega)
             rospy.loginfo(rospy.get_caller_id() + "I heard %s", data)
         else:
-            self._errorPub.publish("Error 0x00: Value out of range")
+            self._errorPub.publish("Error 0x00: Value out of range [control]")
 
     def stopMoveCallback(self, data):
         if data.data != "Stop":
-            self._errorPub.publish("Error 0x01: Wrong message")
+            self._errorPub.publish("Error 0x01: Wrong message [control]")
         else:
-            self._traction.post.stopMove()
+            self._motion.post.stopMove()
 
     def moveToCallback(self, data):
         values = [data.x, data.y, data.alpha, data.t]
@@ -65,7 +78,26 @@ class RobotControl:
 
         if utils.areInRange([values[2]], criteria):
             [x, y, alpha, t] = values
-            self._traction.post.moveTo(x, y, alpha, t)
+            self._motion.post.moveTo(x, y, alpha, t)
             rospy.loginfo(rospy.get_caller_id() + "I heard %s", data)
         else:
-            self._errorPub.publish("Error 0x00: Value out of range")
+            self._errorPub.publish("Error 0x00: Value out of range [control]")
+
+    def handleReadJoint(self, req):
+        if req.joint_name in self._joints.keys():
+            angles = self._motion.getAngles(self._joints[req.joint_name], False)
+            roll = 0.0
+            pitch = 0.0
+            yaw = 0.0
+
+            for i, angle in enumerate(angles):
+                if "Roll" in self._joints[req.joint_name][i]:
+                    roll = angle
+                if "Pitch" in self._joints[req.joint_name][i]:
+                    pitch = angle
+                if "Yaw" in self._joints[req.joint_name][i]:
+                    yaw = angle
+
+            return ReadJointResponse(roll, pitch, yaw)
+        else:
+            self._errorPub.publish("Error 0x01: Wrong message [control]")
