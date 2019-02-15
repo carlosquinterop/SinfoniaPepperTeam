@@ -54,33 +54,33 @@ if __name__ == '__main__':
         test = TestFaceID()
         while 1: 
             option = int(raw_input('** Welcome to Robot Face Test Node ** \n What do you want to test\n 1. Face detector service \n 2. Face recognition service\n 3. Face memorize service \n'))            
-            #try:
-            options = ['\n',1,2,3]
-            if(options.index(int(option))):
-                choise = raw_input('you want the captures to be displayed? (S/n) ')                        
-
-                if(choise==('s' or 'yes' or 'si' or 'S')):
-                    cvWindow = True
-                else:
-                    cvWindow = False
-                if(option==1): 
-                    print('-Detector service:')
-                    test.detect_face(cvWindow)
-                elif(option==2):
-                    print('-Recognize service:')
-                    test.recognize_face(cvWindow)
-
-                else:
-                    print('-Memorize service:')
-                    name  = raw_input('Ingrese el nombre de la persona que desea registrar:\n ')
-                    test.memorize_face(name,cvWindow)
-            #except:
-#            print("""\n\n
-#                     .d88b. 888d888888d888 .d88b. 888d888 
-#                    d8P  Y8b888P"  888P"  d88""88b888P"   
-#                    88888888888    888    888  888888     
-#                    Y8b.    888    888    Y88..88P888     
-#                     "Y8888 888    888     "Y88P" 888   \n""")
-#            print('                         [Wrong instruction, try again]\n\n')
+            try:
+                options = ['\n',1,2,3]
+                if(options.index(int(option))):
+                    choise = raw_input('you want the captures to be displayed? (S/n) ')                        
+    
+                    if(choise==('s' or 'yes' or 'si' or 'S')):
+                        cvWindow = True
+                    else:
+                        cvWindow = False
+                    if(option==1): 
+                        print('-Detector service:')
+                        test.detect_face(cvWindow)
+                    elif(option==2):
+                        print('-Recognize service:')
+                        test.recognize_face(cvWindow)
+    
+                    else:
+                        print('-Memorize service:')
+                        name  = raw_input('Ingrese el nombre de la persona que desea registrar:\n ')
+                        test.memorize_face(name,cvWindow)
+            except:
+                print("""\n\n
+                         .d88b. 888d888888d888 .d88b. 888d888 
+                        d8P  Y8b888P"  888P"  d88""88b888P"   
+                        88888888888    888    888  888888     
+                        Y8b.    888    888    Y88..88P888     
+                         "Y8888 888    888     "Y88P" 888   \n""")
+                print('                         [Wrong instruction, try again]\n\n')
     except rospy.ROSInterruptException:
         pass
