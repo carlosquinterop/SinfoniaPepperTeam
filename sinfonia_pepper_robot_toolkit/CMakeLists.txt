@@ -69,11 +69,13 @@ add_message_files(
    Wav.msg
    File.msg
    T2S.msg
+   LEDs.msg
 )
 
 add_service_files(
   FILES
   TakePicture.srv
+  ReadJoint.srv
 )
 
 ## Generate actions in the 'action' folder

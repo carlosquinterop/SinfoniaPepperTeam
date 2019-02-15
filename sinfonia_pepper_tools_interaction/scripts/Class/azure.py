@@ -6,6 +6,7 @@ import requests
 import os
 import sys
 import json
+from utils import Utils
 
 
 class Azure:
@@ -36,27 +37,13 @@ class Azure:
         #self.personInfo = {}
         # self.get_all_names()
         self.codeError = -1
+        self.utils = Utils()
+
 
     def get_secrets(self, ROOT_PATH):
         with open(ROOT_PATH+"/AZURE_SECRET_CREDENTIALS.json") as f:
             secretInfo = json.load(f)
             return secretInfo["KEY"], secretInfo["BASE_URL"], secretInfo["LARGE_PERSON_GROUP_ID"]
-
-    def detect_faces(self, imageBytes, attributes=ALL_ATTRIBUTES):
-        imgObject = Img(imageBytes)
-        response = []
-        try:
-            response = CF.face.detect(
-                imgObject, face_id=True, attributes=attributes)
-            if response:
-                print("Face detected ", len(response))
-            else:
-                print("No Face detected ")
-        except requests.exceptions.ConnectionError:
-            self.codeError = self.INTERNET_ERROR
-        except:
-            self.codeError = self.DETECT_ERROR
-        return response
 
     def train(self):
         print("TRAINING")
@@ -105,15 +92,15 @@ class Azure:
 
     def add_face(self, imageBytes, person_id):
         self.codeError = -1
-        responseDetection = self.detect_faces(imageBytes)
+        responseDetection = self.detect(imageBytes)
         if self.verify_detection(responseDetection):
-            self.attributes = self.extract_attributes(responseDetection)
+            # self.attributes = self.extract_attributes(responseDetection)
+
             targetFace = self.get_face_rectangle(responseDetection[0])
             imgObject = Img(imageBytes)
             if person_id:
                 try:
-                    CF.large_person_group_person_face.add(imgObject,
-                                                          self.largePersonGroupId,
+                    CF.large_person_group_person_face.add(imgObject, self.largePersonGroupId,
                                                           person_id,
                                                           target_face=targetFace)
                     print("Added face!!")
@@ -163,31 +150,36 @@ class Azure:
             self.codeError = self.LIST_PERSON_ERROR
             print("[Errno {0}] {1}".format(e.errno, e.strerror))
         return groupInfo, self.codeError
-    def detect(self, imageBytes, threshold=None):
+
+    def detect(self, imageBytes, threshold=None, attributes=ALL_ATTRIBUTES):
         self.codeError = -1
-        responseDetection = self.detect_faces(imageBytes)
-        return responseDetection
+        imgObject = Img(imageBytes)
+        response = []
+        try:
+            response = CF.face.detect(imgObject, face_id=True, attributes=attributes)
+            if response:
+                print("Face detected ", len(response))
+            else:
+                print("No Face detected ")
+        except requests.exceptions.ConnectionError:
+            self.codeError = self.INTERNET_ERROR
+        except:
+            self.codeError = self.DETECT_ERROR
+        return response
 
     def identify(self, imageBytes, threshold=None):
         self.codeError = -1
-        responseDetection = self.detect_faces(imageBytes)
-        attributes = None
-        if self.verify_detection(responseDetection):
-            attributes = self.extract_attributes(responseDetection)
+        responseDetection = self.detect(imageBytes)
+        if len(responseDetection)>0:
+            attributes = responseDetection[0]
             attributes["name"] = "desconocido"
             attributes["accuracy"] = 0
-            attributes["id_azure"] = ""
-            maxface = -1
-            size = 0
-            for face in responseDetection:
-                if(int(face['faceRectangle']['width']) > size):
-                    size = int(face['faceRectangle']['width'])
-                    maxface+=1
-            faceId = responseDetection[maxface]["faceId"]
+            attributes['id_azure'] = ""
+            attributes['verify_recognition'] = False
+            faceId = attributes["faceId"]
             try:
-                responseIdentify = CF.face.identify([faceId],
-                                                    large_person_group_id=self.largePersonGroupId,
-                                                    threshold=threshold,)
+                responseIdentify = CF.face.identify([faceId],large_person_group_id=self.largePersonGroupId,threshold=threshold,)
+
             except requests.exceptions.ConnectionError:
                 self.codeError = self.INTERNET_ERROR
             except:
@@ -198,8 +190,10 @@ class Azure:
 
             if self.verify_recognition(responseIdentify):
                 id_azure, accuracy = self.extract_recognition(responseIdentify)
-                attributes["id_azure"] = id_azure
-                attributes["accuracy"] = accuracy
+                attributes["id_azure"] =  id_azure
+                attributes["accuracy"] =  accuracy
+                attributes['verify_recognition'] = True
+
             else:
                 self.codeError = self.VERIFY_RECOGNITION
                 if self.codeError != -1:
@@ -222,9 +216,9 @@ class Azure:
 
     def extract_attributes(self, responseDetection):
 
-        bb = responseDetection[0]['faceRectangle']
-        faceId = responseDetection[0]['faceId']
-        r = responseDetection[0]['faceAttributes']
+        bb = responseDetection['faceRectangle']
+        faceId = responseDetection['faceId']
+        r = responseDetection['faceAttributes']
         age = r['age']
         gender = r['gender']
         smile = r['smile']

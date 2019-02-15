@@ -50,7 +50,8 @@ qtcreator-*
 # Catkin custom files
 CATKIN_IGNORE
 
-CMakeLists.txt
-
 #Ignore Mac files
 .DS_Store
+
+#Ignore rrt_exploration_tutorials
+/rrt_exploration_tutorials 

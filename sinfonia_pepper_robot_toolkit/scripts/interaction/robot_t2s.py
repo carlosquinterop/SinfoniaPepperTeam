@@ -47,4 +47,4 @@ class RobotT2S:
             self.setLanguage(data.language)
             self._t2s.say(data.text)
         else:
-            self._errorPub.publish("Error 0x04: Language not supported")
+            self._errorPub.publish("Error 0x04: Language not supported [t2s]")

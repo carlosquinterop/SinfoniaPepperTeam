@@ -1,4 +1,26 @@
 #!/usr/bin/env python
+# license removed for brevity
+
+"""
+//======================================================================//
+//  This software is free: you can redistribute it and/or modify        //
+//  it under the terms of the GNU General Public License Version 3,     //
+//  as published by the Free Software Foundation.                       //
+//  This software is distributed in the hope that it will be useful,    //
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of      //
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE..  See the      //
+//  GNU General Public License for more details.                        //
+//  You should have received a copy of the GNU General Public License   //
+//  Version 3 in the file COPYING that came with this distribution.     //
+//  If not, see <http://www.gnu.org/licenses/>                          //
+//======================================================================//
+//                                                                      //
+//      Copyright (c) 2019 SinfonIA Pepper RoboCup Team                 //
+//      Sinfonia - Colombia                                             //
+//      https://sinfoniateam.github.io/sinfonia/index.html              //
+//                                                                      //
+//======================================================================//
+"""
 from azure import Azure
 import cv2
 import os, sys
@@ -91,34 +113,29 @@ class Person:
         self.reset_attributes()
         self.frame = frame
         imgBytes = self.check_img(frame)
-        attributes, self.codeError = self.azureService.identify(imgBytes)
-        if attributes:
-            for key, value in attributes.items():
-                setattr(self, key, value)
-            self.gotAttributes = True
-            return True , attributes['id_azure']
-        else:
-            self.reset_attributes()
-            return False, attributes['id_azure']
+        identify,error = self.azureService.identify(imgBytes)
+        # print('IDENTIFY VERIFICATION: ', identify)
+        return identify
         
     def identifyPerson(self, frame):
         personsList = self.persons_in_group()
-        isIdentified,personId = self.identify(frame)
-        print(self.codeError)
-        if isIdentified:
-            for person in personsList:
-                if person['personId'] == self.id_azure:
-                    self.name = person['name']
-                    print('Person Identified: {}'.format(self.name))
-                    return personId
-        else:
-            print('The person was not identified !!')
+        people = self.identify(frame)
+        for person in personsList:
+            if people['verify_recognition']:
+                if person['personId'] == people['id_azure']:
+                    people['name'] = person['name']
+                    print('Person Identified: {}'.format(person['name']))
+            else:
+                people['name'] = 'Desconocido'
+        return people
+      
 
     def detectPerson(self, frame):
         self.frame = frame
         imgBytes = self.check_img(frame)
-        personInPic = self.azureService.detect(imgBytes)
-        return personInPic
+        people = self.azureService.detect(imgBytes)
+        return people
+
 
             
     def delete_person_by_name(self,name):

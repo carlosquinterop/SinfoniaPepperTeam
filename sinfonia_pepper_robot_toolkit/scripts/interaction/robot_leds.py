@@ -1,5 +1,3 @@
-#!/usr/bin/env python2
-# -*- coding: utf-8 -*-
 #!/usr/bin/env python
 # license removed for brevity
 
@@ -24,47 +22,24 @@
 //======================================================================//
 """
 
-import cv2 as cv2
-from person import Person
-from person import Less_Blurred
-from edit_files import Group
+import rospy
+from naoqi import ALProxy
+from std_msgs.msg import String
+from sinfonia_pepper_robot_toolkit.msg import LEDs
 
 
-#import unicodedata
+class RobotLEDs:
 
-class Characterization:
-    def __init__(self):
-        self.persons = Person()
-        self.blurry = Less_Blurred()
+    def __init__(self, ip):
+        self._leds = ALProxy("ALLeds", ip, 9559)
 
-    def get_persons(self):
-        personsList = self.persons.persons_in_group()
-        for p in personsList:
-            print(p)
-        return personsList
+        self._errorPub = rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
 
-    def add_person(self, name, images):
-        self.blurry.sort_less_blurred(images)
-        personId = self.persons.enrol(name, self.blurry.frames)
-        return personId, self.persons
+    def subscribeTopics(self):
+        rospy.Subscriber("sIA_leds", LEDs, self.callback)
 
-    def delete_person(self, name):
-        self.persons.delete_person_by_name(name)
-
-    def indentify_person(self, frame):
-        people = self.persons.identifyPerson(frame)
-        return people
-
-    def detect_person(self, frame):
-        people = self.persons.detectPerson(frame)
-        return people
-
-    def get_persons_attributes(self):
-        G = Group()
-        for p in G.persons:
-            print(p)
-        return G.persons
-
-
-# c = Characterization()
-# c.indentify_person(True)
+    def callback(self, data):
+        if "Ear" in data.name:
+            self._leds.fadeRGB(data.name, 0, 0, data.b / 255, data.t)
+        else:
+            self._leds.fadeRGB(data.name, float(data.r) / 255.0, float(data.g) / 255.0, float(data.b) / 255.0, data.t)

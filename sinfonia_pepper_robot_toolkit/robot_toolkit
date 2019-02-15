@@ -29,5 +29,10 @@ if [ ${MODE} = "test" ]
 		gnome-terminal --command=" bash -c 'rostopic echo /sIA_laser_gr/laser_scan; $SHELL'"&
 	elif [ ${TOPIC} = "sIA_mic" ]
 		then gnome-terminal --command=" bash -c 'rostopic echo /sIA_mic_raw; $SHELL'"&
+	elif [ ${TOPIC} = "sIA_sonars" ]
+		then gnome-terminal --command=" bash -c 'rostopic echo /sIA_sonar_front; $SHELL'"&
+		gnome-terminal --command=" bash -c 'rostopic echo /sIA_sonar_back; $SHELL'"&
+	elif [ ${TOPIC} = "sIA_merge" ]
+		then gnome-terminal --command=" bash -c 'rostopic echo /sIA_merged_laser; $SHELL'"&
 	fi
 fi

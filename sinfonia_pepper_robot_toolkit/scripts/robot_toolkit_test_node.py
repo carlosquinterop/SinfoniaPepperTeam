@@ -27,6 +27,7 @@ import cv2
 import time
 import utils
 import rospy
+import struct
 import argparse
 import numpy as np
 import sounddevice as sd
@@ -34,7 +35,7 @@ from PIL import Image as im
 from cv_bridge import CvBridge
 from sensor_msgs.msg import Image
 from std_msgs.msg import String, Float64MultiArray
-from sinfonia_pepper_robot_toolkit.srv import TakePicture
+from sinfonia_pepper_robot_toolkit.srv import TakePicture, ReadJoint
 from sinfonia_pepper_robot_toolkit.msg import MoveToVector, MoveTowardVector, Wav, T2S, File
 
 
@@ -68,6 +69,14 @@ class RobotToolkitTestNode:
             self.testT2S()
         elif self._testTopic == "sIA_video":
             self.testVideo()
+        elif self._testTopic == "sIA_depth_camera":
+            self.testDepthCamera()
+        elif self._testTopic == "sIA_sonars":
+            self.testSonars()
+        elif self._testTopic == "sIA_merge":
+            self.testMerge()
+        elif self._testTopic == "sIA_read_joint":
+            self.testReadJoint()
 
     def testMoveToward(self):
         pub = rospy.Publisher("sIA_move_toward", MoveTowardVector, queue_size=10)
@@ -133,8 +142,8 @@ class RobotToolkitTestNode:
         time.sleep(5)
         pub.publish("sIA_laser_gr.laser_scan.OFF")
         time.sleep(5)
-    
-        # Error test
+
+        # # Error test
         pub.publish("sIA_laser_grlaser_scanOFF")
         time.sleep(1)
         pub.publish("sIA_laser_gr.laserscan.OFF")
@@ -145,13 +154,13 @@ class RobotToolkitTestNode:
         takePicture = rospy.ServiceProxy("sIA_take_picture", TakePicture)
     
         # Functionality test
-        response = takePicture("Take Picture", [0, 2, 11, 30]).response
+        response = takePicture("Take Picture", [0, 2, 11, 15]).response
         image = im.frombytes("RGB", (response.width, response.height), str(bytearray(response.data)))
         image.show()
-        response = takePicture("Take Picture", [1, 2, 11, 30]).response
+        response = takePicture("Take Picture", [1, 2, 11, 15]).response
         image = im.frombytes("RGB", (response.width, response.height), str(bytearray(response.data)))
         image.show()
-    
+
         # Error test
         try:
             takePicture("Take Picture", [0, 2, 18, 30])
@@ -242,8 +251,6 @@ class RobotToolkitTestNode:
         time.sleep(1)
         pub.publish("sIA_video_stream.0.1.11.ON")
         time.sleep(1)
-        pub.publish("sIA_videostream.0.1.11.30.ON")
-        time.sleep(1)
         pub.publish("sIA_video_stream.3.1.11.30.ON")
         time.sleep(1)
         pub.publish("sIA_video_stream.0.1.11.30.O")
@@ -259,6 +266,64 @@ class RobotToolkitTestNode:
         cv2.namedWindow("Video")
         cv2.imshow("Video", frame)
         cv2.waitKey(10)
+
+    def testDepthCamera(self):
+        rospy.wait_for_service("sIA_take_picture")
+        takePicture = rospy.ServiceProxy("sIA_take_picture", TakePicture)
+
+        # Functionality test
+        distances = []
+        response = takePicture("Take Picture", [2, 1, 17, 1]).response
+        for i in range(0, len(response.data) - 1, 2):
+            distances.append(struct.unpack('<H', response.data[i:i + 2])[0])
+
+        distArray = np.array(distances, dtype=float).reshape(240, 320)
+        normDistArray = (distArray * 255) / np.max(distArray)
+        normDistArray = cv2.convertScaleAbs(normDistArray)
+        image = im.fromarray(255 - normDistArray)
+        image.show()
+
+        # Error test
+        try:
+            takePicture("Take Picture", [2, 1, 17, 30])
+        except rospy.service.ServiceException:
+            pass
+
+    def testSonars(self):
+        pub = rospy.Publisher("sIA_stream_from", String, queue_size=10)
+        while pub.get_num_connections() == 0:
+            self._rate.sleep()
+
+        pub.publish("sIA_sonar_front.ON")
+        pub.publish("sIA_sonar_back.ON")
+        time.sleep(30)
+        pub.publish("sIA_sonar_front.OFF")
+        pub.publish("sIA_sonar_back.OFF")
+
+        # Error test
+        pub.publish("sIA_sonar_font.OFF")
+        pub.publish("sIA_sonar_back.ONN")
+
+    def testMerge(self):
+        pub = rospy.Publisher("sIA_stream_from", String, queue_size=10)
+        while pub.get_num_connections() == 0:
+            self._rate.sleep()
+
+        pub.publish("sIA_laser_merge.ON")
+        time.sleep(30)
+        pub.publish("sIA_laser_merge.OFF")
+
+    def testReadJoint(self):
+        rospy.wait_for_service("sIA_read_joint")
+        readJoint = rospy.ServiceProxy("sIA_read_joint", ReadJoint)
+
+        # Functionality test
+        joints = ["Head", "RShoulder", "RElbow", "RWrist", "LShoulder", "LElbow", "LWrist", "Hip", "Knee"]
+
+        for joint in joints:
+            response = readJoint(joint)
+            print(joint + ":\n\tRoll: " + str(response.roll) + "\n\tPitch: " + str(response.pitch) + "\n\tYaw: "
+                  + str(response.yaw) + "\n")
 
 
 if __name__ == '__main__':
