@@ -1,5 +1,29 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
+#!/usr/bin/env python
+# license removed for brevity
+
+"""
+//======================================================================//
+//  This software is free: you can redistribute it and/or modify        //
+//  it under the terms of the GNU General Public License Version 3,     //
+//  as published by the Free Software Foundation.                       //
+//  This software is distributed in the hope that it will be useful,    //
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of      //
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE..  See the      //
+//  GNU General Public License for more details.                        //
+//  You should have received a copy of the GNU General Public License   //
+//  Version 3 in the file COPYING that came with this distribution.     //
+//  If not, see <http://www.gnu.org/licenses/>                          //
+//======================================================================//
+//                                                                      //
+//      Copyright (c) 2019 SinfonIA Pepper RoboCup Team                 //
+//      Sinfonia - Colombia                                             //
+//      https://sinfoniateam.github.io/sinfonia/index.html              //
+//                                                                      //
+//======================================================================//
+"""
+
 import cv2 as cv2
 from person import Person
 from person import Less_Blurred
@@ -27,49 +51,14 @@ class Characterization:
     def delete_person(self, name):
         self.persons.delete_person_by_name(name)
 
-    def indentify_person(self, cvWindow):
-        cap = cv2.VideoCapture(0)
-        ret, frame = cap.read()
-        frame = cv2.GaussianBlur(frame, (5, 5), 0)
-        cap.release()
-        personId = self.persons.identifyPerson(frame)
-
-        if(cvWindow):
-            pi = (self.persons.bb['left'], self.persons.bb['top'])
-            pf = (self.persons.bb['left']+self.persons.bb['width'],
-                  self.persons.bb['top']+self.persons.bb['height'])
-            cv2.rectangle(frame, pi, pf, (0, 255, 0), 3)
-            font = cv2.FONT_HERSHEY_SIMPLEX
-            cv2.putText(frame, self.persons.name, pi, font,
-                        1, (255, 0, 0), 2, cv2.LINE_AA)
-            cv2.imshow('image', frame)
-            print("Press Enter to Exit")
-            cv2.waitKey(0)
-        return personId
+    def indentify_person(self, frame):
+        people = self.persons.identifyPerson(frame)
+        return people
 
     def detect_person(self, frame):
         people = self.persons.detectPerson(frame)
-        videoSize = frame.shape[0]*frame.shape[1]
-        max_prop = 0;
-        for persons in people:
-            prop = (persons['faceRectangle']['width']*persons['faceRectangle']['height'])*100/videoSize
-            if prop > max_prop:
-                max_prop = prop
-                face_detected = persons
-        if max_prop > 0:
-            pi = (face_detected['faceRectangle']['left'],face_detected['faceRectangle']['top'])
-            pf = (face_detected['faceRectangle']['left']+face_detected['faceRectangle']['width'],
-                  face_detected['faceRectangle']['top']+face_detected['faceRectangle']['height'])
-            cv2.rectangle(frame, pi, pf, (0, 255, 0), 3)
-            font = cv2.FONT_HERSHEY_SIMPLEX
-            cv2.putText(frame, str(max_prop)+'%', pi, font, 1, (255, 0, 0), 2, cv2.LINE_AA)
-        _face_prop = 4
-        print("Prop {}".format(max_prop))
-        if max_prop > _face_prop:
-            resp = True
-        else:
-            resp = False
-        return resp, frame
+        return people
+
     def get_persons_attributes(self):
         G = Group()
         for p in G.persons:
