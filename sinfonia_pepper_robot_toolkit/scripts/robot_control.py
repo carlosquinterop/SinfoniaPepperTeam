@@ -56,6 +56,7 @@ class RobotControl:
         rospy.Subscriber("sIA_move_toward", MoveTowardVector, self.moveTowardCallback)
         rospy.Subscriber("sIA_stop_move", String, self.stopMoveCallback)
         rospy.Subscriber("sIA_move_to", MoveToVector, self.moveToCallback)
+        rospy.Subscriber("sIA_set_posture", String, self.setPostureCallback)
 
     def moveTowardCallback(self, data):
         values = [data.vx, data.vy, data.omega]
@@ -103,3 +104,8 @@ class RobotControl:
             return ReadJointResponse(roll, pitch, yaw)
         else:
             self._errorPub.publish("Error 0x01: Wrong message [control]")
+
+    def setPostureCallback(self, data):
+        posture = data.data
+
+        self._posture.goToPosture(posture, 1.0)
