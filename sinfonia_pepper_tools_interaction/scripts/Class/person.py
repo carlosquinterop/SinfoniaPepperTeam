@@ -93,20 +93,24 @@ class Person:
 
     def enrol(self, id, frames):
         person_id, self.codeError = self.azureService.create_person(id)
-        success_list = []
+        succes = False
         if person_id is not None:
             self.id_azure = person_id
             for frame in frames:
                 imgBytes = self.check_img(frame)
                 successEnrol, self.codeError = self.azureService.add_face(imgBytes, person_id)
-                success_list.append(successEnrol)
-            if self.azureService.attributes:
-                for key, value in self.azureService.attributes.items():
-                    setattr(self, key, value)
-                self.image = frame
-                self.G.add(PersonFiles(id, person_id, self.hairColor, self.glasses, 
-                                       self.gender, self.age))
-            self.azureService.train()
+                if successEnrol:  
+                    succes = True
+                    if self.azureService.attributes:
+                        for key, value in self.azureService.attributes.items():
+                            setattr(self, key, value)
+                        self.image = frame
+                        self.G.add(PersonFiles(id, person_id, self.hairColor, self.glasses, 
+                                self.gender, self.age))
+            if succes:
+                self.azureService.train()
+            else:
+                print('No entrenado')
         return person_id
 
     def identify(self, frame):
@@ -137,7 +141,16 @@ class Person:
         return people
 
 
-            
+    def delete_persons(self):
+        deleted = False
+        personsList, self.codeError = self.azureService.get_all_names()
+        for person in personsList:
+            self.azureService.delete_person(person['personId'])
+            deleted = True
+            print('Person: {} Deleted !!'.format(person['personId']))
+            break
+        if not deleted:
+            print('Person: {} Not Found !!'.format(person['personId']))        
     def delete_person_by_name(self,name):
         deleted = False
         personsList, self.codeError = self.azureService.get_all_names()
@@ -176,8 +189,8 @@ class Person:
                         setattr(self, attr, None)
                         
 class Less_Blurred:
-    def __init__(self):
-        self.nImages = 1
+    def __init__(self, nImages):
+        self.nImages = nImages
         self.fm = qe.PriorityQueue(100)
         self.frames = []
     def sort_less_blurred(self, images):
