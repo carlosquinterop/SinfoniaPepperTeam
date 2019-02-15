@@ -49,9 +49,9 @@ def sendPointToMove(x, y, theta):
 	goal.pose.position.y = y
 	goal.pose.position.z = 0.0
 	goal.pose.orientation.x = quaternion[0]		# Orientation values
-	goal.pose.orientation.x = quaternion[1]
-	goal.pose.orientation.x = quaternion[2]
-	goal.pose.orientation.x = quaternion[3]
+	goal.pose.orientation.y = quaternion[1]
+	goal.pose.orientation.z = quaternion[2]
+	goal.pose.orientation.w = quaternion[3]
 
 	# Publish on topic
 	pose_pub.publish(goal)

@@ -40,7 +40,7 @@ def nodeCallback():
 	message.name = 'Pepper'
 	message.x = pos[0] 
 	message.y = pos[1]
-	message.z = pos[2]
+	message.w = pos[2]
 
 	# Publish the new position into topic
 	pose_pub.publish(message)
