@@ -28,6 +28,7 @@ import rospy
 from std_msgs.msg import String
 from check_door.check_door import CheckDoor
 from sinfonia_pepper_robot_toolkit.msg import MoveToVector, T2S, MoveTowardVector
+from sinfonia_pepper_tools_interaction.srv import *
 
 
 class ApplicationSchedulerNode:
@@ -35,7 +36,7 @@ class ApplicationSchedulerNode:
     def __init__(self):
         rospy.init_node('application_scheduler_node', anonymous=True)
         self._rate = rospy.Rate(10)
-        self._state = "wake_up"
+        self._state =  "offer_service" #"wake_up"
 
         self.checkDoor = None
         self.initPublishers()
@@ -48,14 +49,25 @@ class ApplicationSchedulerNode:
         self.T2Spub = None
         self.moveTowardPub = None
         self.setPosturePub = None
+        self.setSecurityPub = None
 
-        self._messages = {"wake_up": "",
-                          "check_door": "Toc Toc, Hello can you please open the door",
-                          "go_to_room": "Thank you, I am going to the party",
-                          "idle": "at this moment I dont know what to do",
-                          "sleep": ""
-                          }
+        self._messagesEN = {"wake_up": "",
+                            "check_door": "Toc Toc, Hello can you please open the door",
+                            "go_to_room": "Thank you, I am going to the party",
+                            "idle": "at this moment I dont know what to do",
+                            "sleep": ""
+                            }
+        self._messagesES = {"wake_up": "",
+                            "check_door": "Toc Toc, Hola, abreme la puerta porfavor",
+                            "go_to_room": "Gracias",
+                            "navigation": "Voy hacia la sala",
+                            "offer_service": "Si alguien quiere una bebida, porfavor acerquese.",
+                            "idle": "En este momento no se que hacer",
+                            "sleep": ""
+                            }
+
         self.initPublishers()
+
 
     def initPublishers(self):
         self.moveToPub = rospy.Publisher("sIA_move_to", MoveToVector, queue_size=10)
@@ -73,17 +85,29 @@ class ApplicationSchedulerNode:
         self.setPosturePub = rospy.Publisher("sIA_set_posture", String, queue_size=10)
         while self.setPosturePub.get_num_connections() == 0:
             self._rate.sleep()
+        self.setSecurityPub = rospy.Publisher("sIA_set_security", String, queue_size=10)
+        while self.setSecurityPub.get_num_connections() == 0:
+            self._rate.sleep()
+
+    def speak(self, text):
+        rospy.wait_for_service('srvSpeak')
+        try:
+            sendText = rospy.ServiceProxy('srvSpeak', speak)
+            sendText(text)
+        except:
+            pass
 
     def appicationSchedulerNode(self):
+
         while not rospy.is_shutdown():
             print(self._state)
-
-            self.stateMsg.text = self._messages[self._state]
-            self.T2Spub.publish(self.stateMsg)
+            self.speak(self._messagesES[self._state])
+            # self.stateMsg.text = self._messages[self._state]
+            # self.T2Spub.publish(self.stateMsg)
 
             if self._state == "wake_up":
                 self.setPosturePub.publish("StandInit")
-                time.sleep(14)
+                time.sleep(11)
                 self._state = "check_door"
 
             elif self._state == "check_door":
@@ -95,12 +119,21 @@ class ApplicationSchedulerNode:
                     continue
                 self.checkDoor.stopSonar()
                 self._state = "go_to_room"
-                # time.sleep(5)
-
             elif self._state == "go_to_room":
-                msg = utils.fillVector([1.0, 0.0, 0.0, 5.0], "mt")
+                self.setSecurityPub.publish("OFF")
+                msg = utils.fillVector([1.0, 0.0, 0.0, 3.0], "mt")
                 self.moveToPub.publish(msg)
-                time.sleep(5)
+                time.sleep(12)
+                self._state = "navigation"
+                self.setSecurityPub.publish("ON")
+            elif self._state == "navigation":
+                msg = utils.fillVector([2.0, 0.0, 0.0, 3.0], "mt")
+                self.moveToPub.publish(msg)
+                time.sleep(12)
+                self._state = "offer_service"
+            elif self._state == "offer_service":
+                self.setPosturePub.publish("SayHi")
+                time.sleep(10)
                 self._state = "sleep"
             else:
                 self.stopPub.publish("Stop")

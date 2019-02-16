@@ -57,7 +57,7 @@ class RobotSpeakers:
             f.write(data.data)
 
         self._transport = paramiko.Transport((self._ip, 22))
-        self._transport.connect(username="nao", password="nao")
+        self._transport.connect(username="nao", password="1234")
         self._sftp = paramiko.SFTPClient.from_transport(self._transport)
 
         self._sftp.put(path, self._robotPath)
