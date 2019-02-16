@@ -16,11 +16,23 @@ import numpy as np
 import speech_recognition as sr
 import sys
 import getpass
+from array import array
+
+
 username = getpass.getuser()
 reload(sys)
 sys.setdefaultencoding('utf-8')
 source = '0'
-micData = []
+micData = [0]
+RATE = 16000
+THRESHOLD = 0.2
+flag_mic = True
+snd_started = False
+r = []
+num_silent = 0
+
+recording_flag = False
+
 def callback_t2s(req):
     global source
     print ("Returning [%s]"%(req.text_t2s))
@@ -49,7 +61,13 @@ def Speakers():
 
 
 def callback_s2t(req):
-    global mp3_fp,micData, source
+    global mp3_fp,micData, source, flag_mic
+
+    print ("Returning [%s]"%(req.send))
+    tts = gTTS(text=req.send, lang='es')
+    tts.save('/home/'+username+'/good2.mp3')
+    sound = AudioSegment.from_mp3('/home/'+username+'/good2.mp3')
+    sound.export('/home/'+username+'/output.wav', format="wav")
     a=0
     while a==0:
         print ("Returning [%s]"%(req.send))
@@ -62,7 +80,6 @@ def callback_s2t(req):
             os.system('mpg321 /home/'+username+'/good2.mp3')
         elif source=='2':
             Speakers()
-            time.sleep(5)
 
         if source=='1':
             r = sr.Recognizer()
@@ -80,7 +97,13 @@ def callback_s2t(req):
         elif source=='2':
             time.sleep(5)
             print('say something')
-            Mic()
+            micData = []
+            flag_mic = True
+            pub.publish("sIA_mic_raw.1.ON")
+            while flag_mic:
+                pass
+            pub.publish("sIA_mic_raw.1.OFF")
+            sd.play(micData, 16000, mapping=1, blocking=True)
             print('time over')
             sf.write('/home/'+username+'/stereo_file.wav',micData, 16000, 'PCM_24')
             AUDIO_FILE = os.path.join('/home/'+username+'/stereo_file.wav')
@@ -96,23 +119,14 @@ def callback_s2t(req):
                 return listenResponse("Could not request results from Google Speech Recognition service; {0}".format(e))
 
 
-def Mic():
-    global micData, pub
-    micData = []
-    print(micData)
-    while pub.get_num_connections() == 0:
-    	rate = rospy.Rate(10)
-    	rate.sleep()
-    pub.publish("sIA_mic_raw.1.ON")
-    time.sleep(5)
-    pub.publish("sIA_mic_raw.1.OFF")
-    sd.play(np.array(micData), 16000, mapping=1, blocking=True)
-
-
 def MicCallback(data):
-    global micData
+    global micData, flag_mic, r, snd_started, num_silent
     micData += data.data
-
+    minSamples = 32000
+    sample = 32000
+    max = np.max(micData[-1-sample:-1])
+    if max<0.2 and len(micData)>minSamples:
+        flag_mic = False
 
 def callback_options():
     global pub, pub_audio

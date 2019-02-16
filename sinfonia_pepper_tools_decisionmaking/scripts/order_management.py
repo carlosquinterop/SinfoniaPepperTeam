@@ -8,9 +8,9 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-vecClients=[{'name':"Bryan",'order':"gaseosa",'order_state':False, 'personId':"fdjwekejdj", 'features':["black","noglasses","male","21"]},### Vector de prueba
-        {'name':"Andrea",'order':"café",'order_state':False, 'personId':"iuytrdcvbnmjuytg", 'features':["black","eyesglasses","female","20"]},
-        {'name':"Camilo",'order':"vino",'order_state':False, 'personId':"iuytrfvjhgf", 'features':["brown","noglasses","male","19"]}]
+# vecClients=[{'name':"Bryan",'order':"gaseosa",'order_state':False, 'personId':"fdjwekejdj", 'features':["black","noglasses","male","21"]},### Vector de prueba
+#         {'name':"Andrea",'order':"café",'order_state':False, 'personId':"iuytrdcvbnmjuytg", 'features':["black","eyesglasses","female","20"]},
+#         {'name':"Camilo",'order':"vino",'order_state':False, 'personId':"iuytrfvjhgf", 'features':["brown","noglasses","male","19"]}]
 
 dic_drinks = {'bottle':["gaseosa", "cerveza"] , \
               'vase':["agua"] , \
@@ -25,7 +25,7 @@ dic_features = {'black':"negro" , \
               'blond':"rubio" , \
               'sunglasses':"gafas_sol" , \
               'eyesglasses':"gafas"}
-# vecClients = []
+vecClients = []
 vecObjects = []
 orderMissing = []
 str_additional_order = ["cerveza", "gaseosa"]
