@@ -27,6 +27,7 @@ from cv_bridge import CvBridge
 from std_msgs.msg import String, Float64MultiArray
 from sinfonia_pepper_robot_toolkit.srv import TakePicture
 from sinfonia_pepper_robot_toolkit.msg import MoveToVector, MoveTowardVector, Wav, T2S, File
+
 # CV2 librery used for image capture and processing.
 import cv2
 # Lightnet library used for image processing and object recognition

@@ -40,10 +40,10 @@ from sinfonia_pepper_robot_toolkit.msg import MoveToVector, MoveTowardVector, Wa
 
 
 class RobotToolkitTestNode:
-    
+
     def __init__(self, testTopic):
         rospy.init_node('robot_toolkit_test_node', anonymous=True)
-        
+
         self._rate = rospy.Rate(10)
         self._testTopic = testTopic
 
@@ -52,7 +52,7 @@ class RobotToolkitTestNode:
         self.t0 = 0
 
     def robotToolkitTestNode(self):
-        
+
         if self._testTopic == "sIA_move_toward":
             self.testMoveToward()
         elif self._testTopic == "sIA_move_to":
@@ -85,54 +85,54 @@ class RobotToolkitTestNode:
         pub2 = rospy.Publisher("sIA_stop_move", String, queue_size=10)
         while pub2.get_num_connections() == 0:
             self._rate.sleep()
-    
+
         # Functionality test
         square = [[1.0, 0.0, 0.0],
                   [0.0, 1.0, 0.0],
                   [-1.0, 0.0, 0.0],
                   [0.0, -1.0, 0.0]]
-    
+
         for vertex in square:
             msg = utils.fillVector(vertex, "mtw")
             pub.publish(msg)
             time.sleep(3)
-    
+
         stopStr = "Stop"
         pub2.publish(stopStr)
         time.sleep(3)
-    
+
         # Error test
         msg = utils.fillVector([0.0, -2.0, 0.0], "mtw")
         pub.publish(msg)
         time.sleep(3)
         stopStr = "Stap"
         pub2.publish(stopStr)
-    
+
     def testMoveTo(self):
         pub = rospy.Publisher("sIA_move_to", MoveToVector, queue_size=10)
         while pub.get_num_connections() == 0:
             self._rate.sleep()
-    
+
         # Functionality test
         square = [[1.0, 0.0, 0.0, 6.0],
                   [0.0, 1.0, 0.0, 6.0],
                   [-1.0, 0.0, 0.0, 6.0],
                   [0.0, -1.0, 0.0, 6.0]]
-    
+
         for vertex in square:
             msg = utils.fillVector(vertex, "mt")
             pub.publish(msg)
             time.sleep(8)
-    
+
         # Error test
         msg = utils.fillVector([0.0, -1.0, 4.0, 6.0], "mt")
         pub.publish(msg)
-    
+
     def testLaser(self):
         pub = rospy.Publisher("sIA_stream_from", String, queue_size=10)
         while pub.get_num_connections() == 0:
             self._rate.sleep()
-    
+
         # Functionality test
         pub.publish("sIA_laser_gl.laser_scan.ON")
         time.sleep(5)
@@ -148,11 +148,11 @@ class RobotToolkitTestNode:
         time.sleep(1)
         pub.publish("sIA_laser_gr.laserscan.OFF")
         time.sleep(1)
-    
+
     def testCamera(self):
         rospy.wait_for_service("sIA_take_picture")
         takePicture = rospy.ServiceProxy("sIA_take_picture", TakePicture)
-    
+
         # Functionality test
         response = takePicture("Take Picture", [0, 2, 11, 15]).response
         image = im.frombytes("RGB", (response.width, response.height), str(bytearray(response.data)))
@@ -176,58 +176,58 @@ class RobotToolkitTestNode:
             takePicture("Take Picture", [0, 2, 11])
         except rospy.service.ServiceException:
             pass
-    
+
     def testMic(self):
         pub = rospy.Publisher("sIA_stream_from", String, queue_size=10)
         while pub.get_num_connections() == 0:
             self._rate.sleep()
-    
+
         # Functionality test
         rospy.Subscriber("sIA_mic_raw", Float64MultiArray, self.testMicCallback)
         pub.publish("sIA_mic_raw.1.ON")
         time.sleep(5)
         pub.publish("sIA_mic_raw.1.OFF")
         sd.play(np.array(self.micData), 16000, mapping=1, blocking=True)
-    
+
         # Error test
         time.sleep(1)
         pub.publish("sIA_mic_raw.0.ON")
         time.sleep(1)
         pub.publish("sIA_mic_raw.1.O")
-    
+
     def testMicCallback(self, data):
         self.micData += data.data
-    
+
     def testSpeakers(self):
         pub = rospy.Publisher("sIA_play_audio", File, queue_size=10)
         while pub.get_num_connections() == 0:
             self._rate.sleep()
-    
+
         # Functionality test
         msg = File()
         path = os.path.dirname(os.path.abspath(__file__)) + "/test_data/demo.wav"
         with open(path, "rb") as f:
             msg.data = f.read()
-    
+
         msg.extension = path.split('.')[-1]
         pub.publish(msg)
-    
+
         # Error test
         time.sleep(1)
         msg.extension = "mp3"
         pub.publish(msg)
-    
+
     def testT2S(self):
         pub = rospy.Publisher("sIA_say_something", T2S, queue_size=10)
         while pub.get_num_connections() == 0:
             self._rate.sleep()
-    
+
         # Functionality test
         msg = T2S()
         msg.text = "Hi, I'm Freezer. I'm part of sinfonIA team for the RoboCup 2019"
         msg.language = "English"
         pub.publish(msg)
-    
+
         # Error test
         time.sleep(1)
         msg.language = "Spanish"

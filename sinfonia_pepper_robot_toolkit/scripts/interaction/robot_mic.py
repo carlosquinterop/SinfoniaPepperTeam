@@ -100,9 +100,9 @@ class RobotMic(object):
                     if state == "ON":
                         msg = LEDs()
                         msg.name = "FaceLeds"
-                        msg.r = 135
-                        msg.g = 188
-                        msg.b = 255
+                        msg.r = 255
+                        msg.g = 0
+                        msg.b = 0
                         msg.t = 0
                         self._lPub.publish(msg)
                         self.startProcessing(channel)
