@@ -5,6 +5,8 @@ from sinfonia_pepper_tools_decisionmaking.msg import *
 from sinfonia_pepper_tools_decisionmaking.srv import *
 from sinfonia_pepper_tools_interaction.srv  import *
 from std_msgs.msg import String
+from rospy_message_converter import message_converter
+import ast
 from sinfonia_pepper_tools_interaction.srv import FaceDetector
 #from sinfonia_pepper_tools_interaction import TestFaceID
 import os
@@ -22,6 +24,7 @@ class GiveOrder():
         self.person_ok = False
         # self.a = 0
         self.order = None
+        self.attributes_dict = None
 
     def talkListen(self, askname):
         rospy.wait_for_service('srvListen')
@@ -76,7 +79,7 @@ class GiveOrder():
     def detect_face(self, cvWind):
         try:
             detect_face_request = rospy.ServiceProxy('robot_face_detector',FaceDetector)
-            is_face_in_Front = self.detect_face_request(cvWind)
+            is_face_in_Front = detect_face_request(cvWind)
             if is_face_in_Front.response:
                 print("Si Hay cara")
                 return True
@@ -109,7 +112,7 @@ class GiveOrder():
                 break
 
     def entregarOpc(self):
-        self.talk("Camilo, tu pedido no esta disponible, te puedo ofrecer las siguientes opciones")
+        self.talk(self.attributes_dict['name']+", tu pedido no esta disponible, te puedo ofrecer las siguientes opciones")
         for i in range(len(self.order.additional_prod)):
             self.talk(self.order.additional_prod[i])
         respPedido = self.talkListen("¿Qué deseas ordenar")
@@ -117,31 +120,47 @@ class GiveOrder():
         print(self.confResp)
         ans = self.talkListen("Entendí que quieres" + self.confResp[3][0] + "¿Es correcto?")
         self.confAns = self.analyzeName(ans + ".")
-
-    def start(self, data):
-        global a
-        photo = data
-        print("photo",photo,a)
-        while photo == "True" and a > 80:
-            while True:
-                self.Give_order("Bryan")
-                if not self.order.order_state:
-                    while True:
-                        self.entregarOpc()
-                        if self.confAns[0]:
-                            self.orderGlobal = self.confResp[3][0]
-                            break
-                        else:
-                            self.confResp[3] = []
-                    self.updateOrder("Bryan",self.orderGlobal)
-                    photo = "False"
-                    a = 0
-                    pass
+    def recognize_face(self, cvWind):
+            try:
+                recognize_face_request = rospy.ServiceProxy('robot_face_recognize',FaceRecognize)
+                person = recognize_face_request(cvWind)
+                #print('RESPONSE', person)
+                attributes = message_converter.convert_ros_message_to_dictionary(person)
+                self.attributes_dict = ast.literal_eval(attributes['features'])
+                if self.attributes_dict:
+                    print('RESPONSE', self.attributes_dict['name'])
                 else:
-                    self.talk("Tú pedido esta listo, puedes recogerlo en la barra")
+                    print('No hay cara')
+            except rospy.ServiceException:
+                print ("Error!! Make sure robot_face node is running ")
+
+    def start(self):
+        global a
+        #photo = True
+        #print("photo",a,data)
+        while True:
+            while self.detect_face(True):
+                while True:
+                    self.recognize_face(False)
+                    self.Give_order(self.attributes_dict['name'])
+                    if not self.order.order_state:
+                        while True:
+                            self.entregarOpc()
+                            if self.confAns[0]:
+                                self.orderGlobal = self.confResp[3][0]
+                                break
+                            else:
+                                self.confResp[3] = []
+                        self.updateOrder(self.attributes_dict['name'],self.orderGlobal)
+                        #photo = "False"
+                        #a = 0
+                        pass
+                    else:
+                        self.talk(self.attributes_dict['name']+", Tú pedido esta listo, puedes recogerlo en la barra")
+                        break
                     break
                 break
-            break
-            a = 0
+            break    
+            #a = 0
             # print("asdfhjklñññññññ",photo,a)
-        a = a + 1
+        #a = a + 1

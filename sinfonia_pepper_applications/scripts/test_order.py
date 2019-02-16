@@ -7,9 +7,9 @@ from std_msgs.msg import String
 import rospy
 
 
-def callback(data):
+def callback():
     gv = GiveOrder()## objeto para give_order
-    gv.start(data.data) ## ejecucion de give_order, funcion con argumento deteccion de persona
+    gv.start() ## ejecucion de give_order, funcion con argumento deteccion de persona
 
 
 def GiveOrdercalback():
@@ -22,6 +22,6 @@ if __name__ == "__main__":
     # mk = MakeOrder() ## objeto para make_order
     # mk.start() ##ejecucion de make_order
     try:
-        GiveOrdercalback()
+        callback()
     except rospy.ROSInterruptException:
         pass
