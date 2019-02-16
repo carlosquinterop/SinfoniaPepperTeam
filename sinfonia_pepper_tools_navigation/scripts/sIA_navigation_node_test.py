@@ -14,7 +14,7 @@ from sinfonia_pepper_tools_navigation.srv import GetPlaceLocation
  
 global TESTTOPIC
 # Variable de prueba - EDITE EL VALOR DE TESTTOPIC POR LA FUNCIONALIDAD QUE DESEA PROBAR!
-TESTTOPIC = "sIA_test_set_place_location"
+TESTTOPIC = "sIA_test_RRT"
 
 # --- Calbacks ---
 def navigationTestNodeCallback(msg):
@@ -41,6 +41,9 @@ def navigationTestNode():
     if TESTTOPIC == "sIA_test_get_place_location":
  #       testSetPlacesLocation(rate)
    		testGetPlaceLocation(rate)
+
+    if TESTTOPIC == "sIA_test_RRT":
+        testRRT(rate)
 
 # --- Funciones de pruebas ---
 def testDoReactNavigation(rate):
@@ -90,6 +93,16 @@ def testGetPlaceLocation(rate):
     response = placeLocation("Get Place Location", "Living room").response
     print(response)
 
+def testRRT(rate):
+    pub = rospy.Publisher('sIA_target',location, queue_size = 5)
+    msg = location()
+    msg.x = 3
+    msg.y = 0
+    msg.w = 0.5
+    while not rospy.is_shutdown():
+        print(msg)
+        pub.publish(msg)
+        rate.sleep()
 
 if __name__ =='__main__':
 	try:
