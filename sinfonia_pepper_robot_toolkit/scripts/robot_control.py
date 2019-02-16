@@ -108,4 +108,8 @@ class RobotControl:
     def setPostureCallback(self, data):
         posture = data.data
 
-        self._posture.goToPosture(posture, 1.0)
+        if posture == "Crouch":
+            self._motion.rest()
+        elif posture == "StandInit":
+            self._motion.wakeUp()
+
