@@ -63,11 +63,6 @@ def Speakers():
 def callback_s2t(req):
     global mp3_fp,micData, source, flag_mic
 
-    print ("Returning [%s]"%(req.send))
-    tts = gTTS(text=req.send, lang='es')
-    tts.save('/home/'+username+'/good2.mp3')
-    sound = AudioSegment.from_mp3('/home/'+username+'/good2.mp3')
-    sound.export('/home/'+username+'/output.wav', format="wav")
     a=0
     while a==0:
         print ("Returning [%s]"%(req.send))
@@ -103,7 +98,7 @@ def callback_s2t(req):
             while flag_mic:
                 pass
             pub.publish("sIA_mic_raw.1.OFF")
-            sd.play(micData, 16000, mapping=1, blocking=True)
+            #sd.play(micData, 16000, mapping=1, blocking=True)
             print('time over')
             sf.write('/home/'+username+'/stereo_file.wav',micData, 16000, 'PCM_24')
             AUDIO_FILE = os.path.join('/home/'+username+'/stereo_file.wav')
