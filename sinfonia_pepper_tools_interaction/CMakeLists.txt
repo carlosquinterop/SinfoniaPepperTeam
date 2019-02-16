@@ -67,6 +67,9 @@ add_service_files(
   FaceDetector.srv
   FaceMemorize.srv
   FaceRecognize.srv
+  listen.srv
+  speak.srv
+  detect_objects.srv
 )
 
 ## Generate actions in the 'action' folder
