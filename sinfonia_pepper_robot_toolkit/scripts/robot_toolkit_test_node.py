@@ -340,4 +340,4 @@ if __name__ == '__main__':
         node = RobotToolkitTestNode(args.test_topic)
         node.robotToolkitTestNode()
     except rospy.ROSInterruptException:
-        pass
+pass
