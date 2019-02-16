@@ -52,6 +52,9 @@ class TakeOrder():
                 print(self.confClient[1])
                 if self.confClient[1] == True:
                     break
+                else:
+                    self.talk("Esperaré a la siguiente persona")
+                    time.sleep(3)
         str_order = "x"
         print(self.Give_order_bar(str_order))
         # print("nombre",self.nameGlobal)
@@ -132,7 +135,7 @@ class TakeOrder():
             self.confName = list(self.analyzeName(name + "."))
             if self.confName[2] != "":
                 break
-        ans = self.talkListen("Entendí que tú nombre es" + self.confName[2] + " , ¿Es correcto?")
+        ans = self.talkListen("Entendí que tú nombre es " + self.confName[2] + " , ¿Es correcto?")
         self.confAns = self.analyzeName(ans + ".")
         print(self.confName)
 
