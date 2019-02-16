@@ -18,12 +18,11 @@ cameraObjects = []
 
 def ObjectRec():
 	global txt_line
-	objectRecognition.takePhoto(1)
+	objectRecognition.takePhoto(0)
 	print("take photo")
 	objectRecognition.processPhoto()
 	print("process photo")
 	objectRecognition.speakObjects()
-	state = 'awaitingInput3'
 	print("speak Objects")
 
 
@@ -31,7 +30,9 @@ def talker():
 	rospy.init_node('sIA_objetct_detection')
 	print ("Nodo creado con exito")
 	a = rospy.Service('srvDetectObjects', detect_objects, detectObjects)
+	b = rospy.Service('srvDetectObjectsDepth', detect_objects_depth, detectObjectsDepth)
 	rospy.spin()
+
 def testCamera():
 	rospy.wait_for_service("sIA_take_picture")
 	takePicture = rospy.ServiceProxy("sIA_take_picture", TakePicture)
@@ -52,6 +53,15 @@ def detectObjects(data):
 		cameraObjects = objectRecognition.txt_line.split(",")
 		cameraObjects.remove('')
 		return detect_objectsResponse(cameraObjects)
+
+def detectObjectsDepth(data):
+		global cameraObjects
+		ObjectRec()
+		objectRecognition.takeDepthPhoto()
+		cameraObjects=""
+		cameraObjects = objectRecognition.txt_line.split(",")
+		cameraObjects.remove('')
+		return detect_objects_depthResponse(cameraObjects,objectRecognition.dists)
 
 
 if __name__== '__main__':

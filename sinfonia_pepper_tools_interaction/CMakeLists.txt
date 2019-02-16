@@ -70,6 +70,7 @@ add_service_files(
   listen.srv
   speak.srv
   detect_objects.srv
+  detect_objects_depth.srv
 )
 
 ## Generate actions in the 'action' folder

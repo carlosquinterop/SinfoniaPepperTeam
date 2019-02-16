@@ -5,12 +5,12 @@ import rospy
 from sinfonia_pepper_tools_interaction.srv import *
 
 
-def detectObjects(object):
+def detectObjectsDepth(object):
     rospy.wait_for_service('srvDetectObjects')
     try:
-        add_two_ints = rospy.ServiceProxy('srvDetectObjects', detect_objects)
+        add_two_ints = rospy.ServiceProxy('srvDetectObjectsDepth', detect_objects_depth)
         resp5 = add_two_ints(object)
-        return resp5.objects
+        return resp5.objects,resp5.distances
 
     except rospy.ServiceException, e:
         print "Service call failed: %s"%e
@@ -18,4 +18,4 @@ def detectObjects(object):
 
 if __name__ == "__main__":
     object = "gas"
-    print(detectObjects(object))
+    print(detectObjectsDepth(object))
