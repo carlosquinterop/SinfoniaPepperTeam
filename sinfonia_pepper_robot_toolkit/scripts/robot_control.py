@@ -112,4 +112,6 @@ class RobotControl:
             self._motion.rest()
         elif posture == "StandInit":
             self._motion.wakeUp()
+            self._motion.setOrthogonalSecurityDistance(0.0)
+            self._motion.setTangentialSecurityDistance(0.0)
 
