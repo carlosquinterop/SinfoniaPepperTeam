@@ -434,7 +434,8 @@ class RobotLasers:
                                                             "roslaunch ira_laser_tools laserscan_multi_merger.launch "
                                                             "--pid=~/pepper_sinfonia_ws/src/sinfonia_pepper_robot_toolkit/scripts/.temp/pid.txt'"],
                             preexec_fn=os.setsid)
-                    elif state == "OFF":
+                        print("Merge state "+ str(self._merge))
+                    elif state == "OFF" and self._merge:
                         path = os.path.dirname(os.path.abspath(__file__)) + "/../.temp/pid.txt"
                         with open(path, 'r') as f:
                             pid = f.read()
@@ -446,6 +447,7 @@ class RobotLasers:
                         for key in self._lasers.keys():
                             if "srd" in key:
                                 self._lasers[key] = False
+                        print("Merge state " + str(self._merge))
                 except:
                     self._errorPub.publish("Error 0x01: Wrong message [lasers]")
                     return
