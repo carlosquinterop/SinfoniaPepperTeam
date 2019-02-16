@@ -135,6 +135,9 @@ def verifyOrders():
             if vecObjects2[d] == j:
                 vecClients[d]['order_state'] = True
 
+def verifyClients():
+    global vecClients
+    return verify_clientsResponse(len(vecClients))
 
 def findDict(toFind):
     for object in dic_drinks:
@@ -153,6 +156,7 @@ def callServices():
     e = rospy.Service('srvAddAdditionalProducts', additional_products, addAdditionalProducts)
     f = rospy.Service('srvUpdateOrder', update_order, updateOrder)
     g = rospy.Service('srvUpdateStates', update_states, updateStates)
+    h = rospy.Service('srvVerifyClients', verify_clients, verifyClients)
     rospy.spin()
 
 

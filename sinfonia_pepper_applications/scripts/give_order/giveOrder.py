@@ -25,6 +25,7 @@ class GiveOrder():
         # self.a = 0
         self.order = None
         self.attributes_dict = None
+        self.sizeClients = 3
 
     def talkListen(self, askname):
         rospy.wait_for_service('srvListen')
@@ -44,6 +45,16 @@ class GiveOrder():
             resp2 = ask(name)
             print(name)
             return resp2.affirmation,resp2.negation,resp2.clientName,resp2.clientOrder
+        except:
+            print ("Service call failed: %s")
+
+
+    def verifySizeClients(self, name):
+        rospy.wait_for_service('srv_verify_clients')
+        try:
+            ask = rospy.ServiceProxy('srv_verify_clients', verify_clients)
+            respclients = ask()
+            return respclients.clientsize
         except:
             print ("Service call failed: %s")
 
@@ -157,10 +168,12 @@ class GiveOrder():
                         pass
                     else:
                         self.talk(self.attributes_dict['name']+", Tú pedido esta listo, puedes recogerlo en la barra")
+                        self.sizeClients = self.verifySizeClients()
                         break
                     break
                 break
-            break    
+            if self.sizeClients == 0:
+                break
             #a = 0
             # print("asdfhjklñññññññ",photo,a)
         #a = a + 1
