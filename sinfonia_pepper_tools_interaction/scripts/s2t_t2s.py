@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from sinfonia_pepper_tools_interaction.srv import *
-# from sinfonia_pepper_robot_toolkit.msg import MoveToVector, MoveTowardVector, Wav, T2S, File
+from sinfonia_pepper_robot_toolkit.msg import MoveToVector, MoveTowardVector, Wav, T2S, File
 from std_msgs.msg import String, Float64MultiArray
 import rospy
 from gtts import gTTS
-# import sounddevice as sd
+import sounddevice as sd
 import os
 import wave
 import time
@@ -28,7 +28,7 @@ def callback_t2s(req):
     tts.save('/home/'+username+'/good2.mp3')
     sound = AudioSegment.from_mp3('/home/'+username+'/good2.mp3')
     sound.export('/home/'+username+'/output.wav', format="wav")
-    source='1'
+    source='2'
     if source=='1':
         os.system('mpg321 /home/'+username+'/good2.mp3')
         return speakResponse(True)
@@ -57,7 +57,7 @@ def callback_s2t(req):
         tts.save('/home/'+username+'/good2.mp3')
         sound = AudioSegment.from_mp3('/home/'+username+'/good2.mp3')
         sound.export('/home/'+username+'/output.wav', format="wav")
-        source='1'
+        source='2'
         if source=='1':
             os.system('mpg321 /home/'+username+'/good2.mp3')
         elif source=='2':
@@ -77,7 +77,7 @@ def callback_s2t(req):
             except sr.RequestError as e:
                 return listenResponse("Could not request results from Google Speech Recognition service; {0}".format(e))
         elif source=='2':
-            time.sleep(5)
+            # time.sleep(5)
             print('say something')
             Mic()
             print('time over')
@@ -103,9 +103,8 @@ def Mic():
     	rate = rospy.Rate(10)
     	rate.sleep()
     pub.publish("sIA_mic_raw.1.ON")
-    time.sleep(2)
+    time.sleep(5)
     pub.publish("sIA_mic_raw.1.OFF")
-    time.sleep(2)
     sd.play(np.array(micData), 16000, mapping=1, blocking=True)
 
 
@@ -120,7 +119,7 @@ def callback_options():
     s = rospy.Service('srvSpeak', speak, callback_t2s)
     v = rospy.Service('srvListen', listen, callback_s2t)
     pub = rospy.Publisher("sIA_stream_from", String, queue_size=10)
-    # pub_audio = rospy.Publisher("sIA_play_audio", File, queue_size=10)
+    pub_audio = rospy.Publisher("sIA_play_audio", File, queue_size=10)
     rospy.Subscriber("sIA_mic_raw", Float64MultiArray, MicCallback)
     print ("Ready ")
     rospy.spin()
