@@ -5,6 +5,8 @@ from sinfonia_pepper_tools_decisionmaking.msg import *
 from sinfonia_pepper_tools_decisionmaking.srv import *
 from sinfonia_pepper_tools_interaction.srv  import *
 from std_msgs.msg import String
+import threading
+import time
 import os
 import sys
 reload(sys)
@@ -26,14 +28,16 @@ class TakeOrder():
 
     def start(self):
         while True:
-            if True:
+            if self.detect_face(True):
                 while True:
                     self.pedirNombre()
                     print(self.confAns)
                     if self.confAns[0] == True:
                         self.nameGlobal = self.confName[2]
-                        #tk.memorize_face(tk.nameGlobal, False)
-                        #print(tk.features_person,tk.personID)
+                        memorize_thread= threading.Thread(target=self.memorize_face,args=[self.nameGlobal,False])
+                        memorize_thread.start()
+                        print("segui")
+                        print(self.features_person,self.personID)
                         break
                 while True:
                     self.pedirPedido()
@@ -42,7 +46,8 @@ class TakeOrder():
                         break
                     else:
                         self.confName[3] = []
-                self.addNewClient(tk.nameGlobal, self.orderGlobal, self.personID, self.features_person)
+                memorize_thread.join()
+                self.addNewClient(self.nameGlobal, self.orderGlobal, self.personID, self.features_person)
                 self.otroCliente()
                 print(self.confClient[1])
                 if self.confClient[1] == True:
@@ -151,7 +156,7 @@ class TakeOrder():
     def detect_face(self, cvWind):
         try:
             detect_face_request = rospy.ServiceProxy('robot_face_detector',FaceDetector)
-            is_face_in_Front = self.detect_face_request(cvWind)
+            is_face_in_Front = detect_face_request(cvWind)
             if is_face_in_Front.response:
                 print("Si Hay cara")
                 return True
@@ -162,10 +167,12 @@ class TakeOrder():
             print ("Error!! Make sure robot_face node is running ")
 
     def memorize_face(self, name, cvWind):
+        print("entre al hilo")
         try:
             memorize_face_request = rospy.ServiceProxy('robot_face_memorize',FaceMemorize)
-            azure_id = self.memorize_face_request(name, cvWind)
+            azure_id = memorize_face_request(name, cvWind)
             self.features_person = azure_id.features.split(",")
-            self.personID = azure_id.self.personID
+            self.personID = azure_id.personId
         except rospy.ServiceException:
             print ("Error!! Make sure robot_face node is running ")
+        print("termine el hilo")

@@ -120,4 +120,4 @@ class RobotMic(object):
                     self._errorPub.publish("Error 0x01: Wrong message [microphone]")
             except:
                 self._errorPub.publish("Error 0x01: Wrong message [microphone]")
-                return
+return

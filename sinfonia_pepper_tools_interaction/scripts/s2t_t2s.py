@@ -62,6 +62,7 @@ def callback_s2t(req):
             os.system('mpg321 /home/'+username+'/good2.mp3')
         elif source=='2':
             Speakers()
+            time.sleep(5)
 
         if source=='1':
             r = sr.Recognizer()
@@ -77,7 +78,7 @@ def callback_s2t(req):
             except sr.RequestError as e:
                 return listenResponse("Could not request results from Google Speech Recognition service; {0}".format(e))
         elif source=='2':
-            # time.sleep(5)
+            time.sleep(5)
             print('say something')
             Mic()
             print('time over')
