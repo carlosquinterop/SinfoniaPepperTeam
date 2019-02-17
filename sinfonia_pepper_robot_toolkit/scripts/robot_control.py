@@ -67,6 +67,7 @@ class RobotControl:
         rospy.Subscriber("sIA_set_posture", String, self.setPostureCallback)
         rospy.Subscriber("sIA_set_security", String, self.setSecurityCallback)
         rospy.Subscriber("sIA_set_awareness", String, self.setAwarenessCallback)
+        rospy.Subscriber("sIA_set_head_pos", String, self.setHeadPosCallback)
 
     def moveTowardCallback(self, data):
         values = [data.vx, data.vy, data.omega]
@@ -124,10 +125,12 @@ class RobotControl:
 
         if posture == "Crouch":
             self._motion.rest()
+            self._awareness.setEnabled(False)
         elif posture == "StandInit":
             self._motion.wakeUp()
             self._motion.setOrthogonalSecurityDistance(0.01)
             self._motion.setTangentialSecurityDistance(0.01)
+            self._awareness.setEnabled(False)
         elif posture == "SayHi":
             self._animation.run("animations/Stand/Gestures/Hey_1")
 
@@ -158,3 +161,13 @@ class RobotControl:
             angles = [7.5 * 3.1415 / 180, 1.3 * 3.1415 / 180]
             fractionMaxSpeed = 0.2
             self._motion.setAngles(names, angles, fractionMaxSpeed)
+
+    def setHeadPosCallback(self, data):
+
+        yaw, pitch = data.data.split("_")
+        yaw = float(yaw)
+        pitch = float(pitch)
+        names = ["HeadYaw", "HeadPitch"]
+        angles = [yaw * 3.1415 / 180, pitch * 3.1415 / 180]
+        fractionMaxSpeed = 0.2
+        self._motion.setAngles(names, angles, fractionMaxSpeed)

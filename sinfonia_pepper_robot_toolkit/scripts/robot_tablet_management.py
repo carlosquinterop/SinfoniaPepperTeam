@@ -29,7 +29,7 @@ class RobotTabletManagement:
 
     def __init__(self, ip):
         self.tabletService = ALProxy("ALTabletService", ip, 9559)
-        gif = "https://giphy.com/gifs/LVOhyapP5tNOcUTKQ7/html5"
+        gif = "https://raw.githubusercontent.com/ManuelRios18/sinfonIA/master/gifs/SINFONiA.gif"
         self.tabletService.loadUrl(gif)
         self.tabletService.showWebview()
 

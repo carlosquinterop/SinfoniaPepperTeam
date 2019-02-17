@@ -64,6 +64,7 @@ class MakeOrder():
             self.vec_orders = resp4.msg_bar_order.order.split()
             self.vec_ids = resp4.msg_bar_order.personid.split()
             self.vec_features = resp4.msg_bar_order.features
+            self.respAnsOpt = []
             print(self.vec_clients)
             print(self.vec_orders)
             print(self.vec_ids)
@@ -149,7 +150,7 @@ class MakeOrder():
         for i in range(len(self.confOrderOpt[3])):
             self.talk(self.confOrderOpt[3][i])
         ansOpt = self.talkListen('¿Es correcto?')
-        respAnsOpt = self.analyzeTxt(ansOpt)
+        self.respAnsOpt = self.analyzeTxt(ansOpt)
 
     def start(self):
         self.Give_order_bar("x")
@@ -166,7 +167,7 @@ class MakeOrder():
                 break
         while True:
             self.asking4Options()
-            if respAnsOpt[0]:
+            if self.respAnsOpt[0]:
                 print(True)
                 self.Additionals_order(self.confOrderOpt[3])
                 break
