@@ -39,7 +39,7 @@ class ApplicationSchedulerNode:
     def __init__(self):
         rospy.init_node('application_scheduler_node', anonymous=True)
         self._rate = rospy.Rate(10)
-        self._state = "offer_service" #"wake_up"
+        self._state = "wake_up" #"wake_up"
 
         self.checkDoor = None
         self.initPublishers()
@@ -54,6 +54,7 @@ class ApplicationSchedulerNode:
         self.setPosturePub = None
         self.setSecurityPub = None
         self.setAwarenessPub = None
+        self.setHeadPosPub = None
 
         self._messagesES = {"wake_up": "",
                             "check_door": "Toc Toc, Hola, abreme la puerta porfavor",
@@ -94,6 +95,10 @@ class ApplicationSchedulerNode:
         self.setAwarenessPub = rospy.Publisher("sIA_set_awareness", String, queue_size=10)
         while self.setAwarenessPub.get_num_connections() == 0:
             self._rate.sleep()
+        self.setHeadPosPub = rospy.Publisher("sIA_set_head_pos", String, queue_size=10)
+        while self.setHeadPosPub.get_num_connections() == 0:
+            self._rate.sleep()
+
 
 
 
@@ -116,6 +121,7 @@ class ApplicationSchedulerNode:
             if self._state == "wake_up":
                 self.setPosturePub.publish("StandInit")
                 time.sleep(11)
+                self.setHeadPosPub.publish("7.5_1.3")
                 self._state = "check_door"
 
             elif self._state == "check_door":
@@ -132,14 +138,14 @@ class ApplicationSchedulerNode:
                 self.setSecurityPub.publish("OFF")
                 msg = utils.fillVector([1.0, 0.0, 0.0, 3.0], "mt")
                 self.moveToPub.publish(msg)
-                time.sleep(12)
+                time.sleep(4)
                 self._state = "navigation_go_to_living_room"
                 self.setSecurityPub.publish("ON")
 
             elif self._state == "navigation_go_to_living_room":
                 msg = utils.fillVector([2.0, 0.0, 0.0, 3.0], "mt")
                 self.moveToPub.publish(msg)
-                time.sleep(12)
+                time.sleep(5)
                 ### IR A la SALA !!!!!!!!!!!!!!!!!!!!!!!
                 self._state = "offer_service"
 
@@ -161,6 +167,7 @@ class ApplicationSchedulerNode:
                 self.moveToPub.publish(msg)
                 time.sleep(4)
                 self.setSecurityPub.publish("ON")
+                self.setHeadPosPub.publish("7.5_10.5")
 
                 ### IR AL BAR !!!!!!!!!!!!!!!!!!!!!!!
                 self._state = "make_order"
@@ -185,8 +192,10 @@ class ApplicationSchedulerNode:
                 giveOrder = GiveOrder()
                 giveOrder.start()
                 self.setAwarenessPub.publish("OFF")
-                self._state = "navigation_go_to_bar"
-
+                if giveOrder.sizeClients == 0:
+                    self._state = "sleep"
+                else:
+                    self._state = "navigation_go_to_bar"
             else:
                 self.stopPub.publish("Stop")
                 self.setPosturePub.publish("Crouch")

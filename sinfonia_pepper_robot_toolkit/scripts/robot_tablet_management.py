@@ -22,45 +22,14 @@
 //======================================================================//
 """
 
-import rospy
-from sensor_msgs.msg import Range
-from std_msgs.msg import String
+from naoqi import ALProxy
 
 
-class CheckDoor:
+class RobotTabletManagement:
 
-    def __init__(self):
+    def __init__(self, ip):
+        self.tabletService = ALProxy("ALTabletService", ip, 9559)
+        gif = "https://raw.githubusercontent.com/ManuelRios18/sinfonIA/master/gifs/SINFONiA.gif"
+        self.tabletService.loadUrl(gif)
+        self.tabletService.showWebview()
 
-        self._rate = rospy.Rate(10)
-        self.isDoorOpen = False
-        self.patience = 3
-        self.counts = 0
-        self.pub = None
-        self.distThreshold = 0.5
-
-
-    def subscribeTopics(self):
-        rospy.Subscriber("sIA_sonar_front", Range, self.callback)
-
-    def initPublishers(self):
-        self.pub = rospy.Publisher("sIA_stream_from", String, queue_size=10)
-        while self.pub.get_num_connections() == 0:
-            self._rate.sleep()
-
-    def startSonar(self):
-        self.pub.publish("sIA_sonar_front.ON")
-
-    def stopSonar(self):
-        self.pub.publish("sIA_sonar_front.OFF")
-
-
-    def callback(self, data):
-
-        if data.range > self.distThreshold:
-            self.counts += 1
-        if self.counts >= self.patience:
-            self.isDoorOpen = True
-
-    def checkDoor(self):
-
-        return self.isDoorOpen
