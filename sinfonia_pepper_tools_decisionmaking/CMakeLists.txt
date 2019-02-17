@@ -64,6 +64,7 @@ find_package(catkin REQUIRED COMPONENTS
    additional_products.srv
    update_order.srv
    update_states.srv
+   verify_clients.srv
  )
 
 ## Generate actions in the 'action' folder
