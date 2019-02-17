@@ -26,6 +26,7 @@ import rospy
 import argparse
 from robot_control import RobotControl
 from robot_interaction import RobotInteraction
+from robot_tablet_management import RobotTabletManagement
 
 
 class RobotToolkitNode:
@@ -45,6 +46,8 @@ class RobotToolkitNode:
 
         self._robotInteraction.initLEDs()
         self._robotInteraction.robotLEDs.subscribeTopics()
+
+        self._robotTabletManagement = RobotTabletManagement(ip)
 
     def robotToolkitNode(self):
         rospy.spin()
