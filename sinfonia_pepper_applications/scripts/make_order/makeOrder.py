@@ -165,8 +165,9 @@ class MakeOrder():
     def start(self):
         self.Give_order_bar("x")
         self.talkWait()
+        self.talk("Esperaré a que esté listo")
         while True:
-            Aff = self.talkListen("Esperaré a que esté listo")
+            Aff = self.talkListen("")
             confAff = self.analyzeTxt(Aff + ".")
             if confAff[0]:
                 break

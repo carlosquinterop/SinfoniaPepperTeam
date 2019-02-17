@@ -49,7 +49,7 @@ class GiveOrder():
             print ("Service call failed: %s")
 
 
-    def verifySizeClients(self, name):
+    def verifySizeClients(self):
         rospy.wait_for_service('srv_verify_clients')
         try:
             ask = rospy.ServiceProxy('srv_verify_clients', verify_clients)
