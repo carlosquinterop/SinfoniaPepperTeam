@@ -16,6 +16,7 @@ dic_drinks = {'bottle':["gaseosa", "cerveza"] , \
               'vase':["agua"] , \
               'cup':["cafe","café","tinto","te","té"] , \
               'wine glass':["copa de vino","vino"]}
+
 dic_features = {'black':"negro" , \
               'brown':"cafe" , \
               'red':"rojo" , \
@@ -25,6 +26,7 @@ dic_features = {'black':"negro" , \
               'blond':"rubio" , \
               'sunglasses':"gafas_sol" , \
               'eyesglasses':"gafas"}
+              
 vecClients = []
 vecObjects = []
 orderMissing = []

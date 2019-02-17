@@ -171,9 +171,7 @@ class GiveOrder():
                             pass
                         else:
                             self.talk(self.attributes_dict['name']+", Tú pedido esta listo, puedes recogerlo en la barra")
-                            print
                             self.sizeClients = self.verifySizeClients()
-                            print(self.sizeClients)
                             break
                         break
                 break
