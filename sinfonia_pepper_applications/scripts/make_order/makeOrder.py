@@ -126,20 +126,31 @@ class MakeOrder():
 
 
     def confMissing(self):
+        a=0
+        for x in range(len(self.vec_clients)):
+            for y in range(len(self.orderMissing|)):
+                if self.vec_clients[x] == self.orderMissing[y]:
+                    a = a + 1
+
+        if a == len(self.vec_clients):
+            self.talk("No he podido reconocer ninguna orden")
+            return 2
+
+
         if self.orderMissing == []:
             self.talk("Gracias Barman")
-            return True
+            return 1
         else:
             for i in range(len(self.orderMissing)):
                 resp = self.talkListen("Veo que falta el pedido de " + self.orderMissing[i] + ", ¿Es correcto?")
                 confResp = self.analyzeTxt(resp+".")
                 if confResp[1]:
-                    print("uno")
+                    #print("")
                     self.updateOrder(True)
-                    return False
+                    return 2 ## False
                 else:
-                    print("DOS")
-                    return True
+                    #print("DOS")
+                    return 3 ##True
 
 
     def asking4Options(self):
@@ -154,21 +165,24 @@ class MakeOrder():
     def start(self):
         self.Give_order_bar("x")
         self.talkWait()
+        self.talk("Esperaré a que esté listo")
         while True:
-            Aff = self.talkListen("Esperaré a que esté listo")
+            Aff = self.talkListen("")
             confAff = self.analyzeTxt(Aff + ".")
             if confAff[0]:
                 break
         while True:
             print(self.detectObjects("x"))
             self.Make_order(self.vec_orders1)
-            if self.confMissing():
+            if self.confMissing()==1:
                 break
-        while True:
-            self.asking4Options()
-            if respAnsOpt[0]:
-                print(True)
-                self.Additionals_order(self.confOrderOpt[3])
+            elif self.confMissing()==3:
+                while True:
+                    self.asking4Options()
+                    if respAnsOpt[0]:
+                        print(True)
+                        self.Additionals_order(self.confOrderOpt[3])
+                        break
+                    else:
+                        print(False)
                 break
-            else:
-                print(False)

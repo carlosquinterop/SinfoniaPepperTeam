@@ -49,7 +49,7 @@ class GiveOrder():
             print ("Service call failed: %s")
 
 
-    def verifySizeClients(self, name):
+    def verifySizeClients(self):
         rospy.wait_for_service('srv_verify_clients')
         try:
             ask = rospy.ServiceProxy('srv_verify_clients', verify_clients)
@@ -153,24 +153,27 @@ class GiveOrder():
             while self.detect_face(True):
                 while True:
                     self.recognize_face(False)
-                    self.Give_order(self.attributes_dict['name'])
-                    if not self.order.order_state:
-                        while True:
-                            self.entregarOpc()
-                            if self.confAns[0]:
-                                self.orderGlobal = self.confResp[3][0]
-                                break
-                            else:
-                                self.confResp[3] = []
-                        self.updateOrder(self.attributes_dict['name'],self.orderGlobal)
-                        #photo = "False"
-                        #a = 0
+                    if self.attributes_dict['name'] == "":
                         pass
                     else:
-                        self.talk(self.attributes_dict['name']+", Tú pedido esta listo, puedes recogerlo en la barra")
-                        self.sizeClients = self.verifySizeClients()
+                        self.Give_order(self.attributes_dict['name'])
+                        if not self.order.order_state:
+                            while True:
+                                self.entregarOpc()
+                                if self.confAns[0]:
+                                    self.orderGlobal = self.confResp[3][0]
+                                    break
+                                else:
+                                    self.confResp[3] = []
+                            self.updateOrder(self.attributes_dict['name'],self.orderGlobal)
+                            #photo = "False"
+                            #a = 0
+                            pass
+                        else:
+                            self.talk(self.attributes_dict['name']+", Tú pedido esta listo, puedes recogerlo en la barra")
+                            self.sizeClients = self.verifySizeClients()
+                            break
                         break
-                    break
                 break
             if self.sizeClients == 0:
                 break
