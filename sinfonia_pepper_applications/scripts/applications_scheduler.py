@@ -123,6 +123,7 @@ class ApplicationSchedulerNode:
                 time.sleep(11)
                 self.setHeadPosPub.publish("7.5_1.3")
                 self._state = "check_door"
+                #self._state = "give_order"
 
             elif self._state == "check_door":
                 self.checkDoor = CheckDoor()

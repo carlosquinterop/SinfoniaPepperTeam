@@ -49,12 +49,12 @@ class GiveOrder():
             print ("Service call failed: %s")
 
 
-    def verifySizeClients(self):
-        rospy.wait_for_service('srv_verify_clients')
+    def verifySizeClients(self,h):
+        rospy.wait_for_service('srvVerifyClients')
         try:
-            ask = rospy.ServiceProxy('srv_verify_clients', verify_clients)
-            respclients = ask()
-            return respclients.clientsize
+            ask = rospy.ServiceProxy('srvVerifyClients', verify_clients)
+            respclients = ask(h)
+            return respclients
         except:
             print ("Service call failed: %s")
 
@@ -129,7 +129,11 @@ class GiveOrder():
         respPedido = self.talkListen("¿Qué deseas ordenar")
         self.confResp = list(self.analyzeName(respPedido + "."))
         print(self.confResp)
-        ans = self.talkListen("Entendí que quieres" + self.confResp[3][0] + "¿Es correcto?")
+        try:
+            ans = self.talkListen("Entendí que quieres" + self.confResp[3][0] + "¿Es correcto?")
+        except:
+            self.talk("No entendí lo que dijíste")
+            self.confResp[0] = False
         self.confAns = self.analyzeName(ans + ".")
     def recognize_face(self, cvWind):
             try:
@@ -149,34 +153,35 @@ class GiveOrder():
         global a
         #photo = True
         #print("photo",a,data)
-        while True:
-            while self.detect_face(True):
-                while True:
-                    self.recognize_face(False)
-                    if self.attributes_dict['name'] == "":
+        while self.detect_face(True):
+            while True:
+                self.recognize_face(False)
+                if self.attributes_dict['name'] == "":
+                    pass
+                else:
+                    self.Give_order(self.attributes_dict['name'])
+                    if not self.order.order_state:
+                        while True:
+                            self.entregarOpc()
+                            if self.confAns[0]:
+                                self.orderGlobal = self.confResp[3][0]
+                                teOrder(self.attributes_dict['name'], self.orderGlobal)
+                                # photo =
+                                time.sleep(3)
+                                break
+                            else:
+                                self.confResp[3] = []
+                        self.upda"False"
+                        #a = 0
                         pass
                     else:
-                        self.Give_order(self.attributes_dict['name'])
-                        if not self.order.order_state:
-                            while True:
-                                self.entregarOpc()
-                                if self.confAns[0]:
-                                    self.orderGlobal = self.confResp[3][0]
-                                    break
-                                else:
-                                    self.confResp[3] = []
-                            self.updateOrder(self.attributes_dict['name'],self.orderGlobal)
-                            #photo = "False"
-                            #a = 0
-                            pass
-                        else:
-                            self.talk(self.attributes_dict['name']+", Tú pedido esta listo, puedes recogerlo en la barra")
-                            self.sizeClients = self.verifySizeClients()
-                            break
+                        self.talk(self.attributes_dict['name']+", Tú pedido esta listo, puedes recogerlo en la barra")
+                        time.sleep(3)
                         break
-                break
-            if self.sizeClients == 0:
-                break
-            #a = 0
-            # print("asdfhjklñññññññ",photo,a)
-        #a = a + 1
+        self.sizeClients = self.verifySizeClients("h")
+        print("Clientes Restantes: ", self.sizeClients)
+        if self.sizeClients == 0:
+            break
+        #a = 0
+        # print("asdfhjklñññññññ",photo,a)
+    #a = a + 1
