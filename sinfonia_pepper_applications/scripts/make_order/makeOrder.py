@@ -126,6 +126,17 @@ class MakeOrder():
 
 
     def confMissing(self):
+        a=0
+        for x in range(len(self.vec_clients)):
+            for y in range(len(self.orderMissing|)):
+                if self.vec_clients[x] == self.orderMissing[y]:
+                    a = a + 1
+
+        if a == len(self.vec_clients):
+            self.talk("No he podido reconocer ninguna orden")
+            return False
+
+
         if self.orderMissing == []:
             self.talk("Gracias Barman")
             return True
@@ -134,12 +145,12 @@ class MakeOrder():
                 resp = self.talkListen("Veo que falta el pedido de " + self.orderMissing[i] + ", ¿Es correcto?")
                 confResp = self.analyzeTxt(resp+".")
                 if confResp[1]:
-                    print("uno")
+                    #print("")
                     self.updateOrder(True)
-                    return False
+                    return False ## False
                 else:
-                    print("DOS")
-                    return True
+                    #print("DOS")
+                    return True ##True
 
 
     def asking4Options(self):

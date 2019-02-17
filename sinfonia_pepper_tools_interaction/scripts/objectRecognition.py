@@ -114,4 +114,4 @@ class ObjectRecognition():
 		for obj in self.objects:
 			self.txt_line += obj
 			self.txt_line += ","
-			#print("speakObjects = %s", self.txt_line)
+			print("speakObjects = %s", self.txt_line)
