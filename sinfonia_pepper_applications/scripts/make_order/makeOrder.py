@@ -129,7 +129,7 @@ class MakeOrder():
     def confMissing(self):
         a=0
         for x in range(len(self.vec_clients)):
-            for y in range(len(self.orderMissing|)):
+            for y in range(len(self.orderMissing)):
                 if self.vec_clients[x] == self.orderMissing[y]:
                     a = a + 1
 
@@ -166,9 +166,9 @@ class MakeOrder():
     def start(self):
         self.Give_order_bar("x")
         self.talkWait()
-        self.talk("Esperaré a que esté listo")
+        self.talk("Esperaré a que esté")
         while True:
-            Aff = self.talkListen("")
+            Aff = self.talkListen("listo")
             confAff = self.analyzeTxt(Aff + ".")
             if confAff[0]:
                 break
@@ -180,7 +180,7 @@ class MakeOrder():
             elif self.confMissing()==3:
                 while True:
                     self.asking4Options()
-                    if respAnsOpt[0]:
+                    if self.respAnsOpt[0]:
                         print(True)
                         self.Additionals_order(self.confOrderOpt[3])
                         break
