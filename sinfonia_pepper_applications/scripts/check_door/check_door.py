@@ -36,7 +36,7 @@ class CheckDoor:
         self.patience = 3
         self.counts = 0
         self.pub = None
-        self.distThreshold = 0.7
+        self.distThreshold = 0.4
 
 
     def subscribeTopics(self):

@@ -22,6 +22,7 @@
 //======================================================================//
 """
 
+import time
 import utils
 import rospy
 from naoqi import ALProxy
@@ -36,6 +37,11 @@ class RobotControl:
         self._motion = ALProxy("ALMotion", ip, 9559)
         self._motion.moveInit()
 
+        self._animation = ALProxy("ALAnimationPlayer", ip, 9559)
+
+        self._awareness = ALProxy("ALBasicAwareness", ip, 9559)
+
+
         rospy.Service("sIA_read_joint", ReadJoint, self.handleReadJoint)
         self._errorPub = rospy.Publisher("sIA_rt_error_msgs", String, queue_size=10)
 
@@ -49,14 +55,18 @@ class RobotControl:
                         "Hip": ["HipRoll", "HipPitch"],
                         "Knee": ["KneePitch"]
                         }
-        # self._motion.setOrthogonalSecurityDistance(0.0)
-        # self._motion.setTangentialSecurityDistance(0.0)
+
+        self._motion.setExternalCollisionProtectionEnabled("Move", True)
+        self._motion.setOrthogonalSecurityDistance(0.01)
+        self._motion.setTangentialSecurityDistance(0.01)
 
     def subscribeTopics(self):
         rospy.Subscriber("sIA_move_toward", MoveTowardVector, self.moveTowardCallback)
         rospy.Subscriber("sIA_stop_move", String, self.stopMoveCallback)
         rospy.Subscriber("sIA_move_to", MoveToVector, self.moveToCallback)
         rospy.Subscriber("sIA_set_posture", String, self.setPostureCallback)
+        rospy.Subscriber("sIA_set_security", String, self.setSecurityCallback)
+        rospy.Subscriber("sIA_set_awareness", String, self.setAwarenessCallback)
 
     def moveTowardCallback(self, data):
         values = [data.vx, data.vy, data.omega]
@@ -81,8 +91,12 @@ class RobotControl:
 
         if utils.areInRange([values[2]], criteria):
             [x, y, alpha, t] = values
+            # self._motion.setExternalCollisionProtectionEnabled("Move", False)
             self._motion.post.moveTo(x, y, alpha, t)
             rospy.loginfo(rospy.get_caller_id() + "I heard %s", data)
+            print("Orthogonal sec: " + str(self._motion.getOrthogonalSecurityDistance()))
+            print("Tangential sec: " + str(self._motion.getTangentialSecurityDistance()))
+            # self._motion.setExternalCollisionProtectionEnabled("Move", True)
         else:
             self._errorPub.publish("Error 0x00: Value out of range [control]")
 
@@ -112,6 +126,35 @@ class RobotControl:
             self._motion.rest()
         elif posture == "StandInit":
             self._motion.wakeUp()
-            # self._motion.setOrthogonalSecurityDistance(0.0)
-            # self._motion.setTangentialSecurityDistance(0.0)
+            self._motion.setOrthogonalSecurityDistance(0.01)
+            self._motion.setTangentialSecurityDistance(0.01)
+        elif posture == "SayHi":
+            self._animation.run("animations/Stand/Gestures/Hey_1")
 
+
+    def setSecurityCallback(self, data):
+        command = data.data
+
+        if command == "ON":
+            self._motion.setExternalCollisionProtectionEnabled("Move", True)
+            time.sleep(0.1)
+        elif command == "OFF":
+            self._motion.setExternalCollisionProtectionEnabled("Move", False)
+            time.sleep(0.1)
+
+    def setAwarenessCallback(self, data):
+        command = data.data
+        print (command)
+        if command == "ON":
+            print("Buscando")
+            self._awareness.setEnabled(True)
+            time.sleep(0.1)
+        elif command == "OFF":
+            print(" No Buscando")
+            self._awareness.setEnabled(False)
+            time.sleep(0.1)
+            # Example showing how to set angles, using a fraction of max speed
+            names = ["HeadYaw", "HeadPitch"]
+            angles = [7.5 * 3.1415 / 180, 1.3 * 3.1415 / 180]
+            fractionMaxSpeed = 0.2
+            self._motion.setAngles(names, angles, fractionMaxSpeed)

@@ -42,6 +42,7 @@ class Keyreader(Thread):
 		key = str(key)
 		char = key.replace("u'", "")
 		char = char.replace("'", "")
+		print(char)
 		if char == 'w':
 			self.num = 0
 		elif char == 's':

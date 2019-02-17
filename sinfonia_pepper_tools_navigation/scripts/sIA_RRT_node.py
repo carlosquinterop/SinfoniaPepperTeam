@@ -144,9 +144,13 @@ def sIA_RRT_Node():
 
 		if finishedMapCallback:
 			RRTobj.obstacleList = obstacleList
-			path = RRTobj.Planning(animation = True)
+			path = RRTobj.Planning(animation = False)
 			print(path)
 			finishedMapCallback = False
+
+			# Trying to iterate over path points.
+			point_num = 0
+			while point_num < len(path):
 			goal = path[len(path)-2]
 			goalLocation = location()
 			goalLocation.x = goal[0]
